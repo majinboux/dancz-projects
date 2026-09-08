@@ -590,9 +590,9 @@ header{width:100%;max-width:520px;padding:10px 14px 6px;
    Repeat for $0.99 Lives with success URL ?sg_lives=1
    ═══════════════════════════════════════════════════ */
 const RC = {
-  STRIPE_PREMIUM:  'https://buy.stripe.com/REPLACE_PREMIUM_LINK',
-  STRIPE_LIVES:    'https://buy.stripe.com/REPLACE_LIVES_LINK',
-  ADSENSE_PUB:     'ca-pub-REPLACE_WITH_YOUR_PUBLISHER_ID',
+  STRIPE_PREMIUM:  'https://buy.stripe.com/cNiaEXdfw2bh1dx3DccAo0x',
+  STRIPE_LIVES:    'https://buy.stripe.com/7sY9ATa3kcPV9K34HgcAo0y',
+  ADSENSE_PUB:     'ca-pub-5927905355481371',
   ADSENSE_BANNER:  'REPLACE_BANNER_SLOT_ID',
   ADSENSE_INTER:   'REPLACE_INTER_SLOT_ID',
   ADS_LIVE: false, // set to true once publisher ID + slot IDs are filled in
@@ -1355,6 +1355,12 @@ function showPremium(){document.getElementById('prem-overlay').classList.remove(
 function closePremium(){document.getElementById('prem-overlay').classList.add('hidden');}
 
 function buyPremium(){
+  // Native app (iOS/Android) — delegate to RevenueCat via WebView bridge
+  if(window.ReactNativeWebView){
+    window.ReactNativeWebView.postMessage(JSON.stringify({type:'purchase',product:'scripture_gems_premium'}));
+    closePremium();return;
+  }
+  // Web — Stripe Payment Link
   if(RC.STRIPE_PREMIUM.includes('REPLACE')){
     alert('Stripe payment link not configured yet. Check back soon!');return;
   }
@@ -1362,12 +1368,24 @@ function buyPremium(){
 }
 
 function buyLives(){
+  // Native app — delegate to RevenueCat
+  if(window.ReactNativeWebView){
+    window.ReactNativeWebView.postMessage(JSON.stringify({type:'purchase',product:'scripture_gems_lives'}));
+    closePremium();return;
+  }
+  // Web — Stripe Payment Link
   if(RC.STRIPE_LIVES.includes('REPLACE')){
     lives=MAX_LIVES;livesRegenStart=0;saveLives();updateLivesDisplay();closePremium();
     return;
   }
   window.location.href=RC.STRIPE_LIVES;
 }
+
+// Called by native layer after a successful RevenueCat purchase
+window.nativePurchaseSuccess=function(product){
+  if(product==='scripture_gems_premium'){premium=true;localStorage.setItem('sg_prem','1');applyPremium(true);}
+  if(product==='scripture_gems_lives'){lives=MAX_LIVES;livesRegenStart=0;saveLives();updateLivesDisplay();}
+};
 
 function applyPremium(announce){
   document.getElementById('ad-banner').style.display='none';
