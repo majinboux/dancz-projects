@@ -11,7 +11,54 @@ Central hub linking all active Dancz Ministries repositories  game development, 
 Match-3 Bible puzzle game  public domain KJV scripture, ad-supported with $2.99 premium tier. Built for iOS/Android via Capacitor.
 - v1  basic match-3, 30 embedded KJV verses
 - - v2  live KJV fetch from biblelua-data repo, 7-day cache, 7 PD translations
-  - - v3  all 8 retention mechanics: tutorial, lives, streak, leaderboard, jackpot, near-miss, VOTD
+  - - v3  all 8 retention mechanics: tutorial, lives, streak, leaderboard, jac# Dancz Projects — Ryan Eliger Dancz
+**Dancz Ministries** | [danczministries.com](https://danczministries.com)
+
+Central hub for all Dancz Ministries repositories.
+
+---
+
+## 📱 App Repositories
+
+### [scripture-gems](https://github.com/majinboux/scripture-gems)
+Match-3 Bible puzzle game — public domain KJV, ad-supported + $2.99 premium. All 8 retention mechanics built in.
+
+Files: `v1` basic · `v2` live fetch · `v3` translation picker · **`v4_FullApp`** complete build
+Ship: Capacitor + AdMob + RevenueCat → `com.danczministries.scripturegems`
+
+### [snapsell](https://github.com/majinboux/snapsell) *(Private)*
+AI marketplace — snap a photo, list instantly, sell locally. DNCZ spatial cloaking for seller privacy. 66+ commits, 17/17 tests passing. Stack: Expo/RN · Supabase · Stripe · Turborepo
+
+### [cineswipe](https://github.com/majinboux/cineswipe)
+Tinder-style movie discovery — swipe to match, group watch mode. Stack: React Native · TMDB API
+
+---
+
+## 🎮 Game & RPG
+
+### [sanctum-of-spiritborn](https://github.com/majinboux/sanctum-of-spiritborn) *(Private)*
+Spiritual RPG — Pulse/Path/Pressure mechanics, 12 classes, faith-driven gameplay. `docs/` · `agents/` · `skills/sanctum-soul-system/`
+
+---
+
+## 📖 Bible Research
+
+### [biblelua-data](https://github.com/majinboux/biblelua-data) *(Personal Study)*
+80 translations · 73 commentaries · 47 church fathers · 1.75M+ curated dated rows · 31,102 verses.
+Not all translations are public domain — Scripture Gems uses confirmed PD only: KJV · ASV · YLT · Darby · Webster · Weymouth · Rotherham.
+
+---
+
+## 📁 This Repo Contents
+- `funding/` — Chronology research DOCX (grant/VA documentation)
+- `roblox/` — Wayfarer's Restoration build guide PDF
+- `sanctum/` — Design philosophy PDF + Pilgrim's Progress storyboard
+
+---
+
+Ryan Eliger Dancz — 15yr Army veteran (100% P&T) · BSc Religious Studies · MSW candidate USC · Founder Dancz Ministries LLC, Lugoff SC · DAVAR AI platform builder
+
+> *"That they might set their hope in God, and not forget the works of God."* — Psalm 78:7
     - - **To ship:** Capacitor + AdMob + RevenueCat  App Store + Google Play
      
       - ###  [sanctum-of-spiritborn](https://github.com/majinboux/sanctum-of-spiritborn) *(Private)*
