@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Scripture Gems — Dancz Ministries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap">
+<!-- ═══════════════════════════════════════════════════════════
+     ADSENSE — fill in publisher ID when approved
+     Replace ca-pub-REPLACE_WITH_YOUR_PUBLISHER_ID with your real ID
+     ═══════════════════════════════════════════════════════════ -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-REPLACE_WITH_YOUR_PUBLISHER_ID" crossorigin="anonymous"></script>
+<style>
+:root{
+  --bg:#0a0c12;--surface:#151a25;--surface2:#1e2536;--border:#2a3249;
+  --gold:#f2c94c;--gold-dim:#9a7e24;--amber:#e07b39;
+  --emerald:#4ade80;--violet:#a78bfa;--red:#ff4757;--cyan:#38bdf8;
+  --text:#e8eef6;--text-dim:#7888a8;
+  --gem-size:52px;--gap:4px;
+}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#f0f2f7;--surface:#ffffff;--surface2:#e8eaf0;--border:#d0d5e3;
+  --text:#111827;--text-dim:#4b5563;--gold:#b8880a;--gold-dim:#c9962a;
+}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+  overflow-x:hidden;user-select:none}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:999;gap:18px;padding:24px}
+#loading.hidden{display:none}
+.load-logo{font-family:'Cinzel',serif;font-size:24px;color:var(--gold);text-align:center}
+.load-logo small{display:block;font-family:'Inter',sans-serif;font-size:11px;
+  font-weight:400;color:var(--text-dim);margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
+.load-bar-track{width:260px;height:4px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.load-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+  border-radius:99px;transition:width .3s ease}
+.load-verse{font-size:13px;font-style:italic;font-family:Georgia,serif;color:var(--text-dim);
+  text-align:center;max-width:300px;line-height:1.7;min-height:60px}
+.load-status{font-size:11px;color:var(--text-dim);letter-spacing:.04em}
+.pd-badge{font-size:10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;
+  padding:3px 8px;color:var(--text-dim);letter-spacing:.06em}
+
+/* HEADER */
+header{width:100%;max-width:520px;padding:10px 14px 6px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+.logo{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:.04em;line-height:1.3}
+.logo small{display:block;font-family:'Inter',sans-serif;font-size:9px;
+  font-weight:400;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase}
+.header-right{display:flex;gap:6px;align-items:center}
+.streak-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:4px}
+.premium-btn{background:linear-gradient(135deg,#c9962a,var(--gold));color:#0a0c12;border:none;
+  border-radius:20px;padding:5px 11px;font-size:10px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 10px rgba(242,201,76,.25);white-space:nowrap}
+.premium-btn.on{background:linear-gradient(135deg,#5a2d82,#a78bfa);color:#fff}
+
+/* LIVES */
+.lives-bar{width:100%;max-width:520px;padding:0 14px 6px;display:flex;align-items:center;gap:10px}
+.hearts{display:flex;gap:4px}
+.heart{font-size:16px;transition:transform .2s}
+.heart.lost{filter:grayscale(1);opacity:.3;transform:scale(.85)}
+.lives-regen{font-size:10px;color:var(--text-dim);letter-spacing:.03em}
+
+/* VOTD */
+#votd-banner{width:100%;max-width:520px;padding:0 12px 8px}
+.votd-inner{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:10px 14px;display:flex;gap:10px;align-items:flex-start}
+.votd-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.votd-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:3px}
+.votd-text{font-size:12px;font-style:italic;font-family:Georgia,serif;color:var(--text);line-height:1.5}
+.votd-ref{font-size:10px;color:var(--text-dim);margin-top:2px}
+.votd-trans{font-size:9px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:3px;padding:1px 5px;color:var(--gold-dim);display:inline-block;margin-top:2px}
+
+/* TRANS PICKER */
+#trans-picker{width:100%;max-width:520px;padding:0 12px 8px}
+.trans-inner{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.trans-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:8px}
+.trans-grid{display:flex;flex-wrap:wrap;gap:6px}
+.trans-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+  padding:5px 10px;font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all .15s}
+.trans-btn.active{background:rgba(242,201,76,.12);border-color:var(--gold);color:var(--gold)}
+.trans-pd{font-size:8px;color:var(--text-dim);margin-top:6px}
+.trans-pd span{color:var(--emerald)}
+
+/* STATS */
+.stats{width:100%;max-width:520px;display:flex;gap:6px;padding:0 12px 8px}
+.stat-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:7px 8px;display:flex;flex-direction:column;align-items:center}
+.stat-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.stat-value{font-size:18px;font-weight:800;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums}
+.stat-value.sm{font-size:13px;color:var(--text)}
+
+/* PROGRESS */
+.progress-wrap{width:100%;max-width:520px;padding:0 12px 8px}
+.progress-top{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-bottom:3px}
+.progress-bar{width:100%;height:5px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:99px;transition:width .4s ease}
+
+/* BOARD */
+.board-wrap{padding:0 10px;width:100%;max-width:520px;display:flex;justify-content:center;position:relative}
+#board{display:grid;grid-template-columns:repeat(8,var(--gem-size));
+  grid-template-rows:repeat(8,var(--gem-size));gap:var(--gap);
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:7px;
+  box-shadow:0 4px 32px rgba(0,0,0,.5),0 0 0 1px rgba(242,201,76,.06)}
+
+/* GEMS */
+.gem{width:var(--gem-size);height:var(--gem-size);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;font-size:22px;
+  border:2px solid transparent;transition:transform .12s,box-shadow .12s,border-color .12s;position:relative;z-index:1}
+.gem:active{transform:scale(.88)}
+.gem.selected{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4),0 0 16px rgba(255,255,255,.25);transform:scale(1.1);z-index:5}
+.gem.matched{animation:pop .32s forwards}
+@keyframes pop{0%{transform:scale(1.2);opacity:1}60%{transform:scale(1.6);opacity:.5}100%{transform:scale(0);opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .28s}
+.hint{animation:hint-pulse .5s ease-in-out 2;border-color:var(--gold) !important;box-shadow:0 0 0 3px rgba(242,201,76,.4) !important}
+@keyframes hint-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* Normal gems */
+.gem-0{background:linear-gradient(135deg,#ff6b81,#ff4757);box-shadow:0 2px 8px rgba(255,71,87,.35)}
+.gem-1{background:linear-gradient(135deg,#70c1ff,#3d9df2);box-shadow:0 2px 8px rgba(61,157,242,.35)}
+.gem-2{background:linear-gradient(135deg,#7bed9f,#2ed573);box-shadow:0 2px 8px rgba(46,213,115,.35)}
+.gem-3{background:linear-gradient(135deg,#ffe066,#ffd32a);box-shadow:0 2px 8px rgba(255,211,42,.35)}
+.gem-4{background:linear-gradient(135deg,#cd84f1,#a55eea);box-shadow:0 2px 8px rgba(165,94,234,.35)}
+.gem-5{background:linear-gradient(135deg,#ffbe76,#ff9f43);box-shadow:0 2px 8px rgba(255,159,67,.35)}
+.gem-6{background:linear-gradient(135deg,#f0f0f0,#dfe6e9);box-shadow:0 2px 8px rgba(223,230,233,.35)}
+/* Special gems */
+.gem-7{background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 2px 12px rgba(0,180,216,.5);border-color:rgba(0,180,216,.6) !important}
+.gem-8{background:linear-gradient(135deg,#e63946,#9d0208);box-shadow:0 2px 12px rgba(230,57,70,.6);border-color:rgba(230,57,70,.6) !important}
+.gem-7::after,.gem-8::after{content:'';position:absolute;inset:0;border-radius:8px;
+  animation:gem-glow 1.5s ease-in-out infinite alternate}
+@keyframes gem-glow{from{opacity:.3}to{opacity:.7}}
+
+/* TUTORIAL TIP */
+#tutorial-tip{position:absolute;top:50%;left:50%;transform:translate(-50%,-120px);
+  background:var(--gold);color:#0a0c12;padding:10px 16px;border-radius:10px;
+  font-size:13px;font-weight:700;text-align:center;z-index:50;max-width:220px;line-height:1.4;
+  box-shadow:0 4px 20px rgba(242,201,76,.5)}
+#tutorial-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:8px solid transparent;border-top-color:var(--gold)}
+#tutorial-tip.hidden{display:none}
+
+/* CONTROLS */
+.controls{width:100%;max-width:520px;display:flex;gap:6px;padding:8px 12px 4px}
+.ctrl-btn{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:7px 6px;font-size:10px;color:var(--text-dim);cursor:pointer;font-weight:600;
+  text-align:center;transition:background .15s,color .15s}
+.ctrl-btn:hover{background:var(--surface2);color:var(--text)}
+
+/* ADSENSE BANNER */
+#ad-banner{width:100%;max-width:520px;padding:8px 12px 4px}
+.ad-unit-wrap{background:var(--surface);border:1px dashed var(--border);border-radius:8px;
+  min-height:60px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ad-placeholder{display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:11px}
+.ad-tag{background:var(--surface2);border:1px solid var(--border);border-radius:3px;
+  padding:1px 5px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold-dim)}
+
+/* ACHIEVEMENT TOAST */
+.achieve-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#c9962a,var(--gold));color:#0a0c12;
+  padding:10px 18px;border-radius:10px;font-size:12px;font-weight:800;
+  z-index:300;white-space:nowrap;box-shadow:0 4px 20px rgba(242,201,76,.4);
+  animation:toast-in .3s ease}
+@keyframes toast-in{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* FLOAT */
+.float-score{position:fixed;font-size:15px;font-weight:800;color:var(--gold);
+  pointer-events:none;animation:float-up .8s forwards;z-index:200}
+.float-combo{position:fixed;font-size:20px;font-weight:800;
+  pointer-events:none;animation:float-up 1s forwards;z-index:200;
+  text-shadow:0 2px 8px rgba(0,0,0,.5)}
+@keyframes float-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.3)}}
+
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;background:rgba(10,12,18,.92);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:100;padding:20px;backdrop-filter:blur(6px)}
+.overlay.hidden{display:none}
+
+/* SCRIPTURE CARD */
+.scripture-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:380px;width:100%;text-align:center;
+  box-shadow:0 16px 64px rgba(0,0,0,.6),0 0 0 1px rgba(242,201,76,.08);position:relative;overflow:hidden}
+.scripture-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.sc-eyebrow{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.12em;color:var(--gold);margin-bottom:10px}
+.sc-badges{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.sc-badge{font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;
+  padding:2px 8px;color:var(--text-dim);letter-spacing:.05em}
+.sc-badge.ot{color:#ffd32a}.sc-badge.nt{color:#3d9df2}.sc-badge.pd{color:var(--emerald)}
+.sc-text{font-size:16px;line-height:1.7;color:var(--text);font-style:italic;
+  font-family:Georgia,serif;margin-bottom:12px;max-height:180px;overflow-y:auto}
+.sc-ref{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:4px}
+.sc-trans{font-size:10px;color:var(--text-dim);margin-bottom:16px}
+.sc-level{font-size:11px;color:var(--text-dim);margin-bottom:14px;padding:4px 14px;
+  background:var(--surface2);border-radius:20px;display:inline-block}
+.sc-actions{display:flex;gap:8px;margin-bottom:14px}
+.share-btn{flex:1;padding:10px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.share-btn:hover{border-color:var(--gold);color:var(--gold)}
+.sc-danczlink{font-size:10px;color:var(--text-dim);margin-bottom:16px;
+  display:block;padding:6px 10px;background:rgba(242,201,76,.07);
+  border:1px solid rgba(242,201,76,.18);border-radius:6px}
+.sc-danczlink span{color:var(--gold)}
+.continue-btn{width:100%;padding:13px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.05em;box-shadow:0 4px 14px rgba(242,201,76,.35)}
+.extra-verses{margin-top:14px;text-align:left;border-top:1px solid var(--border);padding-top:12px}
+.extra-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:8px}
+.extra-item{font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:6px;
+  border-left:2px solid var(--border);padding-left:8px}
+.extra-item strong{color:var(--text);font-size:9px;text-transform:uppercase;display:block}
+
+/* INTERSTITIAL */
+.inter-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:22px;max-width:360px;width:100%;text-align:center;margin-bottom:12px}
+.inter-ad-unit{min-height:250px;overflow:hidden;margin-bottom:14px;border-radius:6px;background:var(--surface2)}
+.skip-btn{width:100%;padding:11px;background:var(--surface2);color:var(--text);
+  border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
+.skip-btn:disabled{opacity:.35;cursor:not-allowed}
+.skip-note{color:var(--text-dim);font-size:10px;margin-top:5px}
+.inter-verse{font-size:12px;font-style:italic;font-family:Georgia,serif;color:var(--text-dim);
+  margin-top:12px;line-height:1.6;padding:0 4px}
+
+/* STREAK */
+.streak-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 64px rgba(0,0,0,.7)}
+.streak-fire{font-size:52px;margin-bottom:10px}
+.streak-num{font-family:'Cinzel',serif;font-size:48px;color:var(--gold);line-height:1}
+.streak-label{font-size:13px;color:var(--text-dim);margin-bottom:16px}
+.streak-milestone{font-size:12px;background:rgba(242,201,76,.1);border:1px solid rgba(242,201,76,.25);
+  border-radius:8px;padding:8px 12px;margin-bottom:18px;color:var(--text)}
+.streak-close{width:100%;padding:12px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer}
+
+/* JACKPOT */
+.jackpot-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:28px 22px;max-width:340px;width:100%;text-align:center;
+  box-shadow:0 16px 64px rgba(0,0,0,.7),0 0 0 1px rgba(242,201,76,.15);position:relative;overflow:hidden}
+.jackpot-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--violet),var(--gold),var(--amber))}
+.jackpot-eyebrow{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:.12em;margin-bottom:8px}
+.jackpot-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+.jackpot-sub{font-size:12px;color:var(--text-dim);margin-bottom:20px}
+.jackpot-slots{display:flex;justify-content:center;gap:10px;margin-bottom:22px}
+.slot{width:72px;height:80px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:28px;position:relative;overflow:hidden}
+.slot-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.slot.reveal{animation:slot-reveal .5s ease forwards;border-color:var(--gold);background:rgba(242,201,76,.1)}
+@keyframes slot-reveal{0%{transform:scale(.85);opacity:.6}80%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.jackpot-award{font-family:'Cinzel',serif;font-size:28px;color:var(--gold);margin-bottom:6px}
+.jackpot-msg{font-size:13px;color:var(--text-dim);margin-bottom:22px;line-height:1.5}
+.jackpot-close{width:100%;padding:13px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer}
+
+/* QUIZ */
+.quiz-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:24px 20px;max-width:360px;width:100%;box-shadow:0 16px 64px rgba(0,0,0,.7)}
+.quiz-eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;color:var(--gold);
+  text-align:center;margin-bottom:12px}
+.quiz-q{font-size:14px;font-weight:700;color:var(--text);text-align:center;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.quiz-opt{padding:11px 14px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;transition:all .15s}
+.quiz-opt:hover{border-color:var(--gold);color:var(--gold)}
+.quiz-opt.correct{background:rgba(74,222,128,.15);border-color:var(--emerald);color:var(--emerald)}
+.quiz-opt.wrong{background:rgba(255,71,87,.1);border-color:var(--red);color:var(--red)}
+.quiz-result{font-size:12px;text-align:center;color:var(--text-dim);margin-bottom:14px;min-height:20px}
+.quiz-next{width:100%;padding:12px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer}
+.quiz-skip{width:100%;padding:8px;background:none;border:none;color:var(--text-dim);
+  font-size:12px;cursor:pointer;margin-top:4px}
+
+/* ONE MORE TRY */
+.omt-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:320px;width:100%;text-align:center;box-shadow:0 16px 64px rgba(0,0,0,.7)}
+.omt-icon{font-size:44px;margin-bottom:10px}
+.omt-title{font-family:'Cinzel',serif;font-size:18px;color:var(--text);margin-bottom:8px}
+.omt-lives{display:flex;justify-content:center;gap:5px;margin-bottom:8px;font-size:20px}
+.omt-sub{font-size:12px;color:var(--text-dim);margin-bottom:20px;line-height:1.5}
+.omt-yes{width:100%;padding:13px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px}
+.omt-no{width:100%;padding:10px;background:none;border:1px solid var(--border);
+  border-radius:10px;font-size:13px;color:var(--text-dim);cursor:pointer}
+
+/* 5 MORE MOVES */
+.moves-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:320px;width:100%;text-align:center;box-shadow:0 16px 64px rgba(0,0,0,.7)}
+.moves-icon{font-size:44px;margin-bottom:8px}
+.moves-title{font-family:'Cinzel',serif;font-size:18px;color:var(--text);margin-bottom:6px}
+.moves-progress{font-size:12px;color:var(--text-dim);margin-bottom:6px}
+.moves-bar{width:100%;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.moves-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:99px}
+.moves-watch{width:100%;padding:13px;background:linear-gradient(135deg,var(--amber),#f0a02a);
+  color:#0a0c12;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:8px}
+.moves-pass{width:100%;padding:10px;background:none;border:1px solid var(--border);
+  border-radius:10px;font-size:13px;color:var(--text-dim);cursor:pointer}
+
+/* PREMIUM */
+.premium-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:340px;width:100%;text-align:center;
+  box-shadow:0 16px 64px rgba(0,0,0,.7),0 0 0 1px rgba(242,201,76,.1);position:relative;overflow:hidden}
+.premium-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--amber),var(--gold))}
+.prem-icon{font-size:44px;margin-bottom:10px}
+.prem-title{font-family:'Cinzel',serif;font-size:18px;color:var(--gold);margin-bottom:8px}
+.prem-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px;line-height:1.6}
+.prem-list{list-style:none;text-align:left;margin-bottom:20px;display:flex;flex-direction:column;gap:7px}
+.prem-list li{font-size:12px;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.prem-list li::before{content:'✦';color:var(--gold);font-size:9px;margin-top:2px;flex-shrink:0}
+.buy-btn{width:100%;padding:13px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;
+  margin-bottom:8px;box-shadow:0 4px 14px rgba(242,201,76,.35)}
+.lives-buy{width:100%;padding:10px;background:rgba(242,201,76,.08);border:1px solid rgba(242,201,76,.25);
+  border-radius:8px;font-size:12px;font-weight:700;color:var(--gold);cursor:pointer;margin-bottom:8px}
+.close-prem{background:none;border:none;color:var(--text-dim);font-size:11px;cursor:pointer;padding:5px}
+
+/* LEADERBOARD */
+.lb-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:24px 20px;max-width:360px;width:100%;box-shadow:0 16px 64px rgba(0,0,0,.7)}
+.lb-title{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);text-align:center;margin-bottom:16px;letter-spacing:.05em}
+.lb-table{width:100%;border-collapse:collapse;font-size:12px}
+.lb-table th{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);
+  padding:0 8px 8px;text-align:left;font-weight:600}
+.lb-table th:last-child{text-align:right}
+.lb-table td{padding:7px 8px;border-top:1px solid var(--border);color:var(--text);font-variant-numeric:tabular-nums}
+.lb-table td:last-child{text-align:right;color:var(--gold);font-weight:700}
+.lb-rank{color:var(--text-dim);font-size:10px}.lb-rank.top{color:var(--gold)}
+.lb-empty{text-align:center;color:var(--text-dim);font-size:12px;padding:20px 0}
+.lb-close{width:100%;padding:11px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;font-size:13px;color:var(--text);cursor:pointer;font-weight:600;margin-top:16px}
+
+/* GAME OVER */
+.go-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:28px 22px;max-width:360px;width:100%;text-align:center}
+.go-title{font-family:'Cinzel',serif;font-size:22px;color:var(--gold);margin-bottom:4px}
+.go-stats{font-size:13px;color:var(--text-dim);margin-bottom:14px}
+.go-verse{font-size:13px;font-style:italic;font-family:Georgia,serif;color:var(--text-dim);
+  line-height:1.65;margin-bottom:4px;padding:0 6px}
+.go-ref{font-size:11px;color:var(--gold);margin-bottom:12px}
+.go-achievements{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px}
+.achieve-badge{font-size:11px;background:rgba(242,201,76,.1);border:1px solid rgba(242,201,76,.25);
+  border-radius:20px;padding:4px 10px;color:var(--gold)}
+.go-danczlink{font-size:10px;color:var(--text-dim);margin-bottom:16px;display:block;
+  padding:6px 10px;background:rgba(242,201,76,.07);border:1px solid rgba(242,201,76,.18);border-radius:6px}
+.go-danczlink span{color:var(--gold)}
+.replay-btn{width:100%;padding:12px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0a0c12;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer}
+
+/* RESPONSIVE */
+@media(max-width:460px){:root{--gem-size:43px;--gap:3px}#board{padding:5px}.gem{font-size:18px;border-radius:8px}}
+@media(max-width:370px){:root{--gem-size:36px;--gap:2px}.gem{font-size:14px;border-radius:6px}}
+@media(prefers-reduced-motion:reduce){.gem,.float-score,.float-combo,#tutorial-tip{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="load-logo">Scripture Gems<small>Dancz Ministries</small></div>
+  <div class="load-bar-track"><div class="load-bar-fill" id="load-bar"></div></div>
+  <div class="load-verse" id="load-verse">Preparing the Word…</div>
+  <div class="load-status" id="load-status">Loading…</div>
+  <div class="pd-badge">✦ Public Domain Scripture Only</div>
+</div>
+
+<header>
+  <div class="logo">Scripture Gems<small>Dancz Ministries</small></div>
+  <div class="header-right">
+    <div class="streak-pill" id="streak-pill">🔥 <span id="streak-num">0</span></div>
+    <button class="premium-btn" id="premium-btn" onclick="showPremium()">✦ No Ads $2.99</button>
+  </div>
+</header>
+
+<div class="lives-bar">
+  <div class="hearts" id="hearts-row"></div>
+  <div class="lives-regen" id="lives-regen-label"></div>
+</div>
+
+<div id="votd-banner">
+  <div class="votd-inner">
+    <div class="votd-icon">📖</div>
+    <div>
+      <div class="votd-label">Verse of the Day</div>
+      <div class="votd-text" id="votd-text">Loading…</div>
+      <div class="votd-ref" id="votd-ref"></div>
+      <div class="votd-trans" id="votd-trans"></div>
+    </div>
+  </div>
+</div>
+
+<div id="trans-picker">
+  <div class="trans-inner">
+    <div class="trans-label">Translation</div>
+    <div class="trans-grid" id="trans-grid"></div>
+    <div class="trans-pd"><span>✦ All</span> confirmed public domain</div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat-card"><div class="stat-label">Score</div><div class="stat-value" id="score-el">0</div></div>
+  <div class="stat-card"><div class="stat-label">Level</div><div class="stat-value" id="level-el">1</div></div>
+  <div class="stat-card"><div class="stat-label">Moves</div><div class="stat-value sm" id="moves-el">30</div></div>
+  <div class="stat-card"><div class="stat-label">Best</div><div class="stat-value sm" id="best-el">0</div></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-top"><span>Level Progress</span><span id="prog-label">0 / 500</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="board-wrap">
+  <div id="board"></div>
+  <div id="tutorial-tip" class="hidden">Tap two adjacent gems to swap — match 3 or more to clear! ⚡ means Line Clear, 💣 means Bomb.</div>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="showHint()">💡 Hint</button>
+  <button class="ctrl-btn" onclick="shuffleBoard()">🔀 Shuffle</button>
+  <button class="ctrl-btn" onclick="showLeaderboard()">🏆 Best</button>
+  <button class="ctrl-btn" onclick="showPremium()">👑 Premium</button>
+</div>
+
+<!-- AdSense banner — auto-filled by initAds() -->
+<div id="ad-banner">
+  <div class="ad-unit-wrap" id="ad-unit-banner">
+    <div class="ad-placeholder" id="ad-placeholder-banner">
+      <span class="ad-tag">Ad</span>
+      <span>Advertisement · supports Dancz Ministries</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OVERLAYS ══ -->
+
+<div class="overlay hidden" id="sc-overlay">
+  <div class="scripture-card">
+    <div class="sc-eyebrow">Word of the Lord</div>
+    <div class="sc-badges">
+      <span class="sc-badge" id="sc-book-badge"></span>
+      <span class="sc-badge" id="sc-test-badge"></span>
+      <span class="sc-badge pd">✦ Public Domain</span>
+    </div>
+    <div class="sc-text" id="sc-text"></div>
+    <div class="sc-ref" id="sc-ref"></div>
+    <div class="sc-trans" id="sc-trans"></div>
+    <div class="sc-level" id="sc-level"></div>
+    <div class="sc-actions">
+      <button class="share-btn" onclick="shareVerse()">📤 Share Verse</button>
+    </div>
+    <div class="extra-verses" id="extra-verses" style="display:none">
+      <div class="extra-label">Parallel Translations</div>
+      <div id="extra-list"></div>
+    </div>
+    <a class="sc-danczlink" href="https://danczministries.com" target="_blank">
+      Read the full chapter at <span>danczministries.com</span>
+    </a>
+    <button class="continue-btn" id="cont-btn" onclick="continueGame()">Continue ›</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="inter-overlay">
+  <div class="inter-card">
+    <div class="inter-ad-unit" id="inter-ad-unit">
+      <!-- AdSense interstitial/display unit injected by initAds() -->
+    </div>
+    <button class="skip-btn" id="skip-btn" onclick="skipAd()" disabled>Skip ▶</button>
+    <div class="skip-note" id="skip-note">Skip available in 5s</div>
+    <div class="inter-verse" id="inter-verse"></div>
+  </div>
+  <div style="font-size:10px;color:var(--text-dim);text-align:center;max-width:280px;margin-top:10px">
+    Ads keep Scripture Gems free. Remove forever for $2.99.
+  </div>
+</div>
+
+<div class="overlay hidden" id="jackpot-overlay">
+  <div class="jackpot-card">
+    <div class="jackpot-eyebrow">Daily Reward</div>
+    <div class="jackpot-title">Daily Jackpot!</div>
+    <div class="jackpot-sub">First game of the day. Your reward:</div>
+    <div class="jackpot-slots" id="jackpot-slots">
+      <div class="slot" id="slot-0"><span id="slot-icon-0">✨</span><span class="slot-label">Bonus</span></div>
+      <div class="slot" id="slot-1"><span id="slot-icon-1">🔥</span><span class="slot-label">Streak</span></div>
+      <div class="slot" id="slot-2"><span id="slot-icon-2">💎</span><span class="slot-label">Gems</span></div>
+    </div>
+    <div class="jackpot-award" id="jackpot-award">+500</div>
+    <div class="jackpot-msg" id="jackpot-msg"></div>
+    <button class="jackpot-close" onclick="closeJackpot()">Claim Reward ›</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="quiz-overlay">
+  <div class="quiz-card">
+    <div class="quiz-eyebrow">Scripture Quiz</div>
+    <div class="quiz-q" id="quiz-q"></div>
+    <div class="quiz-opts" id="quiz-opts"></div>
+    <div class="quiz-result" id="quiz-result"></div>
+    <button class="quiz-next hidden" id="quiz-next" onclick="quizNext()">Continue ›</button>
+    <button class="quiz-skip" onclick="quizSkip()">Skip quiz</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="streak-overlay">
+  <div class="streak-card">
+    <div class="streak-fire">🔥</div>
+    <div class="streak-num" id="streak-display">1</div>
+    <div class="streak-label">Day Streak</div>
+    <div class="streak-milestone" id="streak-msg"></div>
+    <button class="streak-close" onclick="closeStreak()">Keep Playing ›</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="omt-overlay">
+  <div class="omt-card">
+    <div class="omt-icon">❤️</div>
+    <div class="omt-title">One More Try?</div>
+    <div class="omt-lives" id="omt-lives-row"></div>
+    <div class="omt-sub" id="omt-sub"></div>
+    <button class="omt-yes" onclick="useLifeContinue()">Use a Life — Keep Going</button>
+    <button class="omt-no" onclick="omtDecline()">No thanks, end game</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="moves-overlay">
+  <div class="moves-card">
+    <div class="moves-icon">⚡</div>
+    <div class="moves-title">Almost There!</div>
+    <div class="moves-progress" id="moves-progress-text"></div>
+    <div class="moves-bar"><div class="moves-fill" id="moves-progress-fill"></div></div>
+    <button class="moves-watch" onclick="watchAdForMoves()">Watch an Ad — Get 5 More Moves</button>
+    <button class="moves-pass" onclick="passOnMoves()">No thanks, end game</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="prem-overlay">
+  <div class="premium-card">
+    <div class="prem-icon">👑</div>
+    <div class="prem-title">Scripture Gems Premium</div>
+    <div class="prem-sub">One-time purchase. Every dollar goes directly to Dancz Ministries. The Word always stays free.</div>
+    <ul class="prem-list">
+      <li>No banner or interstitial ads ever</li>
+      <li>All 7 public domain translations unlocked</li>
+      <li>Parallel translation view on every scripture card</li>
+      <li>Supports free Bible access at danczministries.com</li>
+    </ul>
+    <button class="buy-btn" onclick="buyPremium()">Remove Ads Forever — $2.99</button>
+    <button class="lives-buy" onclick="buyLives()">Refill 5 Lives — $0.99</button>
+    <button class="close-prem" onclick="closePremium()">No thanks, keep ads</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="lb-overlay">
+  <div class="lb-card">
+    <div class="lb-title">Scripture Gems — Top Scores</div>
+    <div id="lb-body"></div>
+    <button class="lb-close" onclick="closeLeaderboard()">Close</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="go-overlay">
+  <div class="go-card">
+    <div class="go-title">Well Played</div>
+    <div class="go-stats">Level <span id="go-level">1</span> · Score <span id="go-score">0</span> · Streak 🔥<span id="go-streak">0</span></div>
+    <div class="go-verse" id="go-verse"></div>
+    <div class="go-ref" id="go-ref"></div>
+    <div class="go-achievements" id="go-achievements"></div>
+    <a class="go-danczlink" href="https://danczministries.com" target="_blank">
+      Dive deeper at <span>danczministries.com</span> — free Hebrew, Greek &amp; chronology
+    </a>
+    <button class="replay-btn" onclick="startGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   REVENUE CONFIG — fill these in when you have them
+   ═══════════════════════════════════════════════════
+   HOW TO GET STRIPE PAYMENT LINKS (no code needed):
+   1. Go to dashboard.stripe.com → Payment Links → + New
+   2. Add product "Scripture Gems Premium" $2.99 one-time
+   3. Set success URL to: [your hosted game URL]?sg_premium=1
+   4. Copy the link URL (looks like buy.stripe.com/xxx)
+   5. Paste into STRIPE_PREMIUM below
+   Repeat for $0.99 Lives with success URL ?sg_lives=1
+   ═══════════════════════════════════════════════════ */
+const RC = {
+  STRIPE_PREMIUM:  'https://buy.stripe.com/REPLACE_PREMIUM_LINK',
+  STRIPE_LIVES:    'https://buy.stripe.com/REPLACE_LIVES_LINK',
+  ADSENSE_PUB:     'ca-pub-REPLACE_WITH_YOUR_PUBLISHER_ID',
+  ADSENSE_BANNER:  'REPLACE_BANNER_SLOT_ID',
+  ADSENSE_INTER:   'REPLACE_INTER_SLOT_ID',
+  ADS_LIVE: false, // set to true once publisher ID + slot IDs are filled in
+};
+
+/* ═══════════════════════════════
+   TRANSLATIONS
+   ═══════════════════════════════ */
+const TRANSLATIONS = [
+  {key:'KJV',label:'KJV',year:1611,full:'King James Version (1611)',url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/KJV.json',cacheKey:'sg4_kjv'},
+  {key:'ASV',label:'ASV',year:1901,full:'American Standard Version (1901)',url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/ASV.json',cacheKey:'sg4_asv'},
+  {key:'YLT',label:"Young's",year:1898,full:"Young's Literal Translation (1898)",url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/YLT.json',cacheKey:'sg4_ylt'},
+  {key:'DARBY',label:'Darby',year:1890,full:'Darby Bible (1890)',url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/DARBY.json',cacheKey:'sg4_darby'},
+  {key:'WBT',label:'Webster',year:1833,full:"Webster's Bible (1833)",url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/WBT.json',cacheKey:'sg4_wbt'},
+  {key:'WEYMOUTH',label:'Weymouth',year:1903,full:'Weymouth NT (1903)',url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/WEYMOUTH.json',cacheKey:'sg4_weymouth'},
+  {key:'ROTHERHAM',label:'Rotherham',year:1902,full:"Rotherham's Emphasized Bible (1902)",url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/ROTHERHAM.json',cacheKey:'sg4_roth'},
+];
+const CACHE_TTL = 86400000 * 7;
+
+const FALLBACK = [
+  {text:"In the beginning God created the heaven and the earth.",ref:"Genesis 1:1",book:"Genesis",testament:"Old Testament",trans:"KJV"},
+  {text:"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",ref:"John 3:16",book:"John",testament:"New Testament",trans:"KJV"},
+  {text:"The LORD is my shepherd; I shall not want.",ref:"Psalm 23:1",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"I can do all things through Christ which strengtheneth me.",ref:"Philippians 4:13",book:"Philippians",testament:"New Testament",trans:"KJV"},
+  {text:"Trust in the LORD with all thine heart; and lean not unto thine own understanding.",ref:"Proverbs 3:5",book:"Proverbs",testament:"Old Testament",trans:"KJV"},
+  {text:"Be still, and know that I am God.",ref:"Psalm 46:10",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"Thy word is a lamp unto my feet, and a light unto my path.",ref:"Psalm 119:105",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"Come unto me, all ye that labour and are heavy laden, and I will give you rest.",ref:"Matthew 11:28",book:"Matthew",testament:"New Testament",trans:"KJV"},
+  {text:"And we know that all things work together for good to them that love God.",ref:"Romans 8:28",book:"Romans",testament:"New Testament",trans:"KJV"},
+  {text:"The fear of the LORD is the beginning of wisdom.",ref:"Proverbs 9:10",book:"Proverbs",testament:"Old Testament",trans:"KJV"},
+  {text:"For by grace are ye saved through faith; and that not of yourselves: it is the gift of God.",ref:"Ephesians 2:8",book:"Ephesians",testament:"New Testament",trans:"KJV"},
+  {text:"I am the way, the truth, and the life: no man cometh unto the Father, but by me.",ref:"John 14:6",book:"John",testament:"New Testament",trans:"KJV"},
+  {text:"But seek ye first the kingdom of God, and his righteousness.",ref:"Matthew 6:33",book:"Matthew",testament:"New Testament",trans:"KJV"},
+  {text:"Greater love hath no man than this, that a man lay down his life for his friends.",ref:"John 15:13",book:"John",testament:"New Testament",trans:"KJV"},
+  {text:"But they that wait upon the LORD shall renew their strength.",ref:"Isaiah 40:31",book:"Isaiah",testament:"Old Testament",trans:"KJV"},
+  {text:"Create in me a clean heart, O God; and renew a right spirit within me.",ref:"Psalm 51:10",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"Delight thyself also in the LORD: and he shall give thee the desires of thine heart.",ref:"Psalm 37:4",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",ref:"2 Timothy 1:7",book:"2 Timothy",testament:"New Testament",trans:"KJV"},
+  {text:"Yea, though I walk through the valley of the shadow of death, I will fear no evil.",ref:"Psalm 23:4",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"For the invisible things of him from the creation of the world are clearly seen.",ref:"Romans 1:20",book:"Romans",testament:"New Testament",trans:"KJV"},
+];
+
+const GEMS = [
+  {e:'🔴',n:'Ruby'},{e:'🔵',n:'Sapphire'},{e:'🟢',n:'Emerald'},
+  {e:'🟡',n:'Topaz'},{e:'🟣',n:'Amethyst'},{e:'🟠',n:'Citrine'},{e:'⚪',n:'Pearl'},
+  {e:'⚡',n:'Line'},{e:'💣',n:'Bomb'},
+];
+const GEM_TYPES = 7; // 0-6 normal, 7=line, 8=bomb
+
+/* ═══════════════════════════════
+   ACHIEVEMENTS
+   ═══════════════════════════════ */
+const ACHIEVEMENTS = [
+  {id:'first_5',icon:'⚡',name:'5-Match!',check:()=>sessionStats.maxMatch>=5},
+  {id:'chain3',icon:'🔗',name:'Chain x3',check:()=>sessionStats.maxChain>=3},
+  {id:'bomb_used',icon:'💣',name:'Bomber',check:()=>sessionStats.bombsUsed>0},
+  {id:'share',icon:'📤',name:'Shared the Word',check:()=>sessionStats.shared},
+  {id:'streak7',icon:'🔥',name:'7-Day Streak',check:()=>streak>=7},
+  {id:'level5',icon:'🏆',name:'Level 5+',check:()=>level>=5},
+];
+let sessionStats = {maxMatch:0,maxChain:0,bombsUsed:0,shared:false};
+let earnedAchievements = [];
+
+/* ═══════════════════════════════
+   STATE
+   ═══════════════════════════════ */
+const GRID=8, MOVES_BASE=30;
+let versePool={}, activeTransKey='KJV', verseQueue=[], verseIdx=0;
+let grid=[], score=0, level=1, moves=MOVES_BASE, levelGoal=500;
+let selected=null, animating=false, pendingOverlay=false;
+let bestScore=parseInt(localStorage.getItem('sg_best')||'0');
+let premium=localStorage.getItem('sg_prem')==='1';
+let streak=parseInt(localStorage.getItem('sg_streak')||'0');
+let lastPlayed=localStorage.getItem('sg_last')||'';
+let skipTimer=null, skipCd=5;
+let tutorialShown=localStorage.getItem('sg_tutorial')==='1';
+let currentVerse=null, quizBonusMoves=0;
+
+const MAX_LIVES=5, LIVES_REGEN_MS=30*60*1000;
+let lives=parseInt(localStorage.getItem('sg_lives')||'5');
+let livesRegenStart=parseInt(localStorage.getItem('sg_lives_regen')||'0');
+let jackpotPending=false, jackpotBonus=0;
+
+/* ═══════════════════════════════
+   AUDIO — Web Audio API
+   ═══════════════════════════════ */
+let _audioCtx=null;
+function ac(){
+  if(!_audioCtx) try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  return _audioCtx;
+}
+function tone(f,d,type='sine',vol=0.12,delay=0){
+  try{
+    const ctx=ac();if(!ctx)return;
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type=type;o.frequency.value=f;
+    const t=ctx.currentTime+delay;
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);
+    o.start(t);o.stop(t+d);
+  }catch(e){}
+}
+function sndMatch(){tone(660,.12,'sine',.1)}
+function sndSelect(){tone(440,.07,'sine',.07)}
+function sndLine(){[440,660,880].forEach((f,i)=>tone(f,.15,'square',.06,i*.05))}
+function sndBomb(){[220,180,140].forEach((f,i)=>tone(f,.3,'sawtooth',.1,i*.06))}
+function sndLevelUp(){[523,659,784,1047].forEach((f,i)=>tone(f,.28,'sine',.13,i*.11))}
+function sndGameOver(){[523,466,415,370].forEach((f,i)=>tone(f,.35,'triangle',.09,i*.14))}
+function sndCombo(n){tone(440+n*80,.18,'sine',.11);tone(660+n*80,.18,'sine',.07,0.05);}
+
+/* ═══════════════════════════════
+   ADS
+   ═══════════════════════════════ */
+function initAds(){
+  if(!RC.ADS_LIVE||premium) return;
+  // Banner
+  const wrap=document.getElementById('ad-unit-banner');
+  wrap.innerHTML=`<ins class="adsbygoogle" style="display:block;width:100%;min-height:60px"
+    data-ad-client="${RC.ADSENSE_PUB}" data-ad-slot="${RC.ADSENSE_BANNER}"
+    data-ad-format="auto" data-full-width-responsive="true"></ins>`;
+  try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+  // Interstitial slot
+  const iw=document.getElementById('inter-ad-unit');
+  iw.innerHTML=`<ins class="adsbygoogle" style="display:block;width:100%;min-height:250px"
+    data-ad-client="${RC.ADSENSE_PUB}" data-ad-slot="${RC.ADSENSE_INTER}"
+    data-ad-format="auto" data-full-width-responsive="true"></ins>`;
+  try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+}
+
+/* check return URL from Stripe payment link */
+function checkPaymentReturn(){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    if(p.get('sg_premium')==='1'){premium=true;localStorage.setItem('sg_prem','1');applyPremium(true);}
+    if(p.get('sg_lives')==='1'){lives=MAX_LIVES;livesRegenStart=0;saveLives();}
+    // clean URL
+    if(p.has('sg_premium')||p.has('sg_lives')){
+      history.replaceState({},'',window.location.pathname);
+    }
+  }catch(e){}
+}
+
+/* ═══════════════════════════════
+   INIT
+   ═══════════════════════════════ */
+async function init(){
+  checkPaymentReturn();
+  regenLives();
+  buildTransPicker();
+  checkStreak();
+  await loadTranslation('KJV');
+  setVOTD();
+  await sleep(300);
+  document.getElementById('loading').classList.add('hidden');
+  if(premium) applyPremium(false);
+  updateLivesDisplay();
+  initAds();
+  startGame();
+}
+
+/* ═══════════════════════════════
+   LOADING
+   ═══════════════════════════════ */
+async function loadTranslation(key){
+  const t=TRANSLATIONS.find(x=>x.key===key);
+  if(!t||versePool[key]?.length>50) return;
+  setLoad(10,`Loading ${t.full}…`);
+  try{
+    const c=localStorage.getItem(t.cacheKey);
+    const ts=parseInt(localStorage.getItem(t.cacheKey+'_ts')||'0');
+    if(c&&(Date.now()-ts)<CACHE_TTL){const p=JSON.parse(c);if(p.length>50){versePool[key]=p;setLoad(100,`${p.length.toLocaleString()} verses ready`);return;}}
+  }catch(e){}
+  setLoad(20,`Fetching ${key}…`);
+  try{
+    const res=await fetch(t.url);if(!res.ok)throw 0;
+    setLoad(55,'Parsing…');const data=await res.json();
+    setLoad(75,'Indexing…');const parsed=parseBiblelua(data,key);
+    versePool[key]=parsed;
+    try{localStorage.setItem(t.cacheKey,JSON.stringify(parsed));localStorage.setItem(t.cacheKey+'_ts',Date.now());}catch(e){}
+    setLoad(100,`${parsed.length.toLocaleString()} ${key} verses ready`);
+  }catch(e){
+    versePool[key]=FALLBACK;setLoad(100,`${FALLBACK.length} embedded verses ready`);
+  }
+}
+
+function parseBiblelua(data,key){
+  const p=[];
+  for(const bk of Object.values(data.books||{})){
+    const book=bk.book_name||'',testament=bk.testament==='NT'?'New Testament':'Old Testament';
+    for(const[ch,vv] of Object.entries(bk.chapters||{}))
+      for(const[vn,txt] of Object.entries(vv))
+        if(typeof txt==='string'&&txt.trim().length>=18&&txt.trim().length<=320)
+          p.push({text:txt.trim(),ref:`${book} ${ch}:${vn}`,book,testament,trans:key});
+  }
+  return p;
+}
+
+function setLoad(pct,msg){
+  document.getElementById('load-bar').style.width=pct+'%';
+  document.getElementById('load-status').textContent=msg;
+  const pool=versePool['KJV']||FALLBACK;
+  if(pool.length>0){
+    const v=pool[Math.floor(Math.random()*Math.min(pool.length,200))];
+    document.getElementById('load-verse').textContent=`"${v.text.slice(0,110)}${v.text.length>110?'…':''}"`;
+  }
+}
+
+function setVOTD(){
+  const pool=versePool['KJV']||FALLBACK;
+  const v=pool[Math.floor(Date.now()/86400000)%pool.length];
+  document.getElementById('votd-text').textContent=`"${v.text}"`;
+  document.getElementById('votd-ref').textContent=`— ${v.ref}`;
+  document.getElementById('votd-trans').textContent=v.trans+' · Public Domain ✦';
+}
+
+/* ═══════════════════════════════
+   TRANSLATION PICKER
+   ═══════════════════════════════ */
+function buildTransPicker(){
+  const g=document.getElementById('trans-grid');g.innerHTML='';
+  TRANSLATIONS.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='trans-btn'+(t.key===activeTransKey?' active':'');
+    btn.textContent=t.label;btn.title=t.full;
+    btn.onclick=async()=>{
+      activeTransKey=t.key;
+      document.querySelectorAll('.trans-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('loading').classList.remove('hidden');setLoad(0,'');
+      await loadTranslation(t.key);rebuildQueue();setVOTD();
+      document.getElementById('loading').classList.add('hidden');
+    };
+    g.appendChild(btn);
+  });
+}
+
+function rebuildQueue(){
+  verseQueue=shuffle([...(versePool[activeTransKey]||FALLBACK)]);verseIdx=0;
+}
+
+/* ═══════════════════════════════
+   STREAK
+   ═══════════════════════════════ */
+function checkStreak(){
+  const today=new Date().toDateString(),yesterday=new Date(Date.now()-86400000).toDateString();
+  if(lastPlayed===today){}
+  else if(lastPlayed===yesterday){streak++;localStorage.setItem('sg_streak',streak);localStorage.setItem('sg_last',today);if(streak>1)showStreak();}
+  else{streak=1;localStorage.setItem('sg_streak',1);localStorage.setItem('sg_last',today);}
+  document.getElementById('streak-num').textContent=streak;
+  const jackpotDate=localStorage.getItem('sg_jackpot_date')||'';
+  if(jackpotDate!==today) jackpotPending=true;
+}
+function showStreak(){
+  document.getElementById('streak-display').textContent=streak;
+  let msg=`Day ${streak} — keep going.`;
+  if(streak>=365)msg='One full year. Extraordinary.';
+  else if(streak>=100)msg='100 days in a row. Remarkable.';
+  else if(streak>=30)msg='30 days — a whole month. Well done.';
+  else if(streak>=7)msg='Seven days straight. This is a habit.';
+  document.getElementById('streak-msg').textContent=msg;
+  document.getElementById('streak-overlay').classList.remove('hidden');
+}
+function closeStreak(){document.getElementById('streak-overlay').classList.add('hidden');}
+
+/* ═══════════════════════════════
+   LIVES
+   ═══════════════════════════════ */
+function regenLives(){
+  if(lives>=MAX_LIVES||!livesRegenStart) return;
+  const elapsed=Date.now()-livesRegenStart;
+  const n=Math.floor(elapsed/LIVES_REGEN_MS);
+  if(n>0){lives=Math.min(MAX_LIVES,lives+n);if(lives>=MAX_LIVES)livesRegenStart=0;else livesRegenStart=Date.now()-(elapsed%LIVES_REGEN_MS);saveLives();}
+}
+function spendLife(){if(lives>0){lives--;if(lives<MAX_LIVES&&!livesRegenStart)livesRegenStart=Date.now();saveLives();updateLivesDisplay();}}
+function saveLives(){localStorage.setItem('sg_lives',lives);localStorage.setItem('sg_lives_regen',livesRegenStart);}
+function updateLivesDisplay(){
+  const row=document.getElementById('hearts-row');row.innerHTML='';
+  for(let i=0;i<MAX_LIVES;i++){const h=document.createElement('span');h.className='heart'+(i>=lives?' lost':'');h.textContent='❤️';row.appendChild(h);}
+  const label=document.getElementById('lives-regen-label');
+  if(lives>=MAX_LIVES){label.textContent='';}
+  else if(livesRegenStart){const rem=Math.max(0,LIVES_REGEN_MS-(Date.now()-livesRegenStart));label.textContent=`+1 in ${Math.ceil(rem/60000)}m`;}
+}
+
+/* ═══════════════════════════════
+   GAME
+   ═══════════════════════════════ */
+function startGame(){
+  hideAll();
+  score=0;level=1;moves=MOVES_BASE;levelGoal=500;selected=null;pendingOverlay=false;
+  sessionStats={maxMatch:0,maxChain:0,bombsUsed:0,shared:false};
+  earnedAchievements=[];
+  rebuildQueue();buildGrid();render();updateStats();
+  if(!tutorialShown) showTutorial();
+}
+
+function buildGrid(){
+  do{grid=Array.from({length:GRID},()=>Array.from({length:GRID},()=>Math.floor(Math.random()*GEM_TYPES)));}
+  while(findMatches().length>0);
+}
+
+function render(){
+  const b=document.getElementById('board');b.innerHTML='';
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    const el=document.createElement('div');
+    const t=grid[r][c];
+    el.className=`gem gem-${Math.min(t,8)}`;
+    el.textContent=GEMS[t]?.e||'💠';
+    if(selected&&selected[0]===r&&selected[1]===c) el.classList.add('selected');
+    el.addEventListener('click',()=>handleClick(r,c));
+    b.appendChild(el);
+  }
+}
+
+function handleClick(r,c){
+  if(animating||pendingOverlay) return;
+  sndSelect();hideTutorial();
+  if(!selected){selected=[r,c];render();return;}
+  const[sr,sc]=selected;
+  if(sr===r&&sc===c){selected=null;render();return;}
+  if(!adj(sr,sc,r,c)){selected=[r,c];render();return;}
+  selected=null;doSwap(sr,sc,r,c);
+}
+
+function adj(r1,c1,r2,c2){return(Math.abs(r1-r2)===1&&c1===c2)||(Math.abs(c1-c2)===1&&r1===r2);}
+
+async function doSwap(r1,c1,r2,c2){
+  animating=true;
+  swap(r1,c1,r2,c2);
+  if(findMatches().length===0){
+    swap(r1,c1,r2,c2);render();shakeIdx(r1,c1);shakeIdx(r2,c2);
+    animating=false;return;
+  }
+  moves--;
+  await resolve();
+  updateStats();animating=false;
+  checkAchievements();
+  if(score>=levelGoal){doLevelComplete();return;}
+  if(moves<=0){doMovesUp();}
+}
+
+function swap(r1,c1,r2,c2){[grid[r1][c1],grid[r2][c2]]=[grid[r2][c2],grid[r1][c1]];}
+
+function findMatches(){
+  const s=new Set();
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID-2;c++){
+    const t=normalType(grid[r][c]);
+    if(t===normalType(grid[r][c+1])&&t===normalType(grid[r][c+2])){
+      let l=3;while(c+l<GRID&&normalType(grid[r][c+l])===t)l++;
+      for(let i=0;i<l;i++)s.add(`${r},${c+i}`);
+    }
+  }
+  for(let c=0;c<GRID;c++)for(let r=0;r<GRID-2;r++){
+    const t=normalType(grid[r][c]);
+    if(t===normalType(grid[r+1][c])&&t===normalType(grid[r+2][c])){
+      let l=3;while(r+l<GRID&&normalType(grid[r+l][c])===t)l++;
+      for(let i=0;i<l;i++)s.add(`${r+i},${c}`);
+    }
+  }
+  // include special gems (7,8) in any adjacent match
+  const specials=[];
+  for(const k of s){
+    const[r,c]=k.split(',').map(Number);
+    for(const[dr,dc] of[[-1,0],[1,0],[0,-1],[0,1]]){
+      const nr=r+dr,nc=c+dc;
+      if(nr>=0&&nr<GRID&&nc>=0&&nc<GRID&&grid[nr][nc]>=GEM_TYPES&&!s.has(`${nr},${nc}`))
+        specials.push(`${nr},${nc}`);
+    }
+  }
+  specials.forEach(k=>s.add(k));
+  return[...s].map(k=>k.split(',').map(Number));
+}
+
+function normalType(t){return t>=GEM_TYPES?-1:t;}
+
+async function resolve(){
+  let chain=0;
+  while(true){
+    const m=findMatches();if(!m.length)break;
+    chain++;
+    if(chain>sessionStats.maxChain) sessionStats.maxChain=chain;
+    if(m.length>sessionStats.maxMatch) sessionStats.maxMatch=m.length;
+    const pts=m.length*10*chain;score+=pts;
+    showFloat(`+${pts}`,m);
+    if(chain>=2) showCombo(chain,m);
+    sndMatch();
+    // trigger special gem effects before removing
+    await triggerSpecials(m);
+    await animateMatch(m);
+    // create special gems from big matches
+    createSpecial(m,chain);
+    drop();
+    await sleep(180);render();await sleep(70);
+  }
+}
+
+async function triggerSpecials(m){
+  const specials=m.filter(([r,c])=>grid[r][c]===7||grid[r][c]===8);
+  for(const[r,c] of specials){
+    if(grid[r][c]===7){sndLine();await lineBlast(r,c);}
+    else if(grid[r][c]===8){sndBomb();sessionStats.bombsUsed++;await bombBlast(r,c);}
+  }
+}
+
+async function lineBlast(r,c){
+  for(let cc=0;cc<GRID;cc++){grid[r][cc]=-1;}
+  const base=5*GRID;score+=base;showFloat(`+${base} LINE!`,[[r,GRID>>1]]);
+  render();await sleep(180);
+}
+
+async function bombBlast(r,c){
+  let cnt=0;
+  for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){
+    const nr=r+dr,nc=c+dc;if(nr>=0&&nr<GRID&&nc>=0&&nc<GRID){grid[nr][nc]=-1;cnt++;}
+  }
+  const base=cnt*8;score+=base;showFloat(`+${base} BOOM!`,[[r,c]]);
+  render();await sleep(200);
+}
+
+function createSpecial(m,chain){
+  if(m.length>=5){
+    const[r,c]=m[m.length>>1];grid[r][c]=8;// bomb
+  } else if(m.length===4){
+    const[r,c]=m[m.length>>1];grid[r][c]=7;// line
+  }
+}
+
+function animateMatch(m){
+  return new Promise(res=>{
+    const els=document.querySelectorAll('.gem');
+    m.forEach(([r,c])=>{els[r*GRID+c]?.classList.add('matched');if(grid[r][c]>=0&&grid[r][c]<GEM_TYPES)grid[r][c]=-1;});
+    setTimeout(res,340);
+  });
+}
+
+function drop(){
+  for(let c=0;c<GRID;c++){
+    let e=GRID-1;
+    for(let r=GRID-1;r>=0;r--){if(grid[r][c]!==-1){grid[e][c]=grid[r][c];if(e!==r)grid[r][c]=-1;e--;}}
+    for(let r=e;r>=0;r--)grid[r][c]=Math.floor(Math.random()*GEM_TYPES);
+  }
+}
+
+/* ═══════════════════════════════
+   TUTORIAL
+   ═══════════════════════════════ */
+function showTutorial(){document.getElementById('tutorial-tip').classList.remove('hidden');}
+function hideTutorial(){
+  const el=document.getElementById('tutorial-tip');
+  if(!el.classList.contains('hidden')){el.classList.add('hidden');tutorialShown=true;localStorage.setItem('sg_tutorial','1');}
+}
+
+/* ═══════════════════════════════
+   HINT & SHUFFLE
+   ═══════════════════════════════ */
+function showHint(){
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    for(const[dr,dc] of[[0,1],[1,0]]){
+      const r2=r+dr,c2=c+dc;if(r2>=GRID||c2>=GRID)continue;
+      swap(r,c,r2,c2);if(findMatches().length>0){swap(r,c,r2,c2);pulseHint(r,c);pulseHint(r2,c2);return;}
+      swap(r,c,r2,c2);
+    }
+  }
+  shuffleBoard();
+}
+function pulseHint(r,c){
+  const el=document.querySelectorAll('.gem')[r*GRID+c];if(!el)return;
+  el.classList.add('hint');el.addEventListener('animationend',()=>el.classList.remove('hint'),{once:true});
+}
+function shuffleBoard(){
+  do{for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++)if(grid[r][c]<GEM_TYPES)grid[r][c]=Math.floor(Math.random()*GEM_TYPES);}
+  while(findMatches().length>0);render();
+}
+
+/* ═══════════════════════════════
+   FLOAT & COMBO
+   ═══════════════════════════════ */
+function showFloat(text,cells){
+  const b=document.getElementById('board');const rect=b.getBoundingClientRect();
+  const gs=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gem-size'));
+  const gp=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gap'));
+  const[r,c]=cells[cells.length>>1];
+  const el=document.createElement('div');el.className='float-score';el.textContent=text;
+  el.style.left=`${rect.left+7+c*(gs+gp)+gs/2}px`;el.style.top=`${rect.top+7+r*(gs+gp)}px`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+}
+
+function showCombo(n,cells){
+  const labels=['','','Double!','Triple!','x4 Chain!','x5 Blaze!','x6 INFERNO!'];
+  const colors=['','','#f2c94c','#e07b39','#a78bfa','#ff4757','#38bdf8'];
+  const b=document.getElementById('board');const rect=b.getBoundingClientRect();
+  const el=document.createElement('div');el.className='float-combo';
+  el.textContent=labels[Math.min(n,6)]||`x${n}!`;
+  el.style.color=colors[Math.min(n,6)]||'#fff';
+  el.style.left=`${rect.left+rect.width/2}px`;el.style.top=`${rect.top+rect.height/3}px`;
+  el.style.transform='translateX(-50%)';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+  sndCombo(n);
+}
+
+function shakeIdx(r,c){
+  const el=document.querySelectorAll('.gem')[r*GRID+c];if(!el)return;
+  el.classList.add('shake');el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});
+}
+
+/* ═══════════════════════════════
+   STATS
+   ═══════════════════════════════ */
+function updateStats(){
+  document.getElementById('score-el').textContent=score.toLocaleString();
+  document.getElementById('level-el').textContent=level;
+  document.getElementById('moves-el').textContent=moves;
+  if(score>bestScore){bestScore=score;localStorage.setItem('sg_best',bestScore);}
+  document.getElementById('best-el').textContent=bestScore.toLocaleString();
+  const pct=Math.min((score/levelGoal)*100,100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=`${score.toLocaleString()} / ${levelGoal.toLocaleString()}`;
+  document.getElementById('streak-num').textContent=streak;
+}
+
+/* ═══════════════════════════════
+   ACHIEVEMENTS
+   ═══════════════════════════════ */
+function checkAchievements(){
+  for(const a of ACHIEVEMENTS){
+    if(!earnedAchievements.includes(a.id)&&a.check()){
+      earnedAchievements.push(a.id);showAchievement(a);
+    }
+  }
+}
+function showAchievement(a){
+  const el=document.createElement('div');el.className='achieve-toast';
+  el.textContent=`${a.icon} Achievement: ${a.name}`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),2800);
+}
+
+/* ═══════════════════════════════
+   SHARE VERSE
+   ═══════════════════════════════ */
+function shareVerse(){
+  if(!currentVerse) return;
+  const text=`"${currentVerse.text}" — ${currentVerse.ref} (${currentVerse.trans})\n\nPlay Scripture Gems free at danczministries.com`;
+  if(navigator.share){
+    navigator.share({title:'Scripture Gems',text,url:'https://danczministries.com'})
+      .then(()=>{sessionStats.shared=true;checkAchievements();})
+      .catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(text).then(()=>{
+      const btn=document.querySelector('.share-btn');
+      if(btn){btn.textContent='✅ Copied!';setTimeout(()=>btn.textContent='📤 Share Verse',2000);}
+    }).catch(()=>{});
+    sessionStats.shared=true;checkAchievements();
+  }
+}
+
+/* ═══════════════════════════════
+   MOVES UP — retention flow
+   ═══════════════════════════════ */
+function doMovesUp(){
+  pendingOverlay=true;
+  const pct=score/levelGoal;
+  if(pct>=0.6&&!premium){show5MoreMoves();}
+  else if(lives>0){showOneTry();}
+  else{realGameOver();}
+}
+
+function show5MoreMoves(){
+  const pct=score/levelGoal;
+  document.getElementById('moves-progress-text').textContent=`${Math.round(pct*100)}% of level goal — ${(levelGoal-score).toLocaleString()} points to go`;
+  document.getElementById('moves-progress-fill').style.width=(pct*100)+'%';
+  document.getElementById('moves-overlay').classList.remove('hidden');
+}
+function watchAdForMoves(){
+  document.getElementById('moves-overlay').classList.add('hidden');
+  moves=5;pendingOverlay=false;updateStats();
+  showCombo(0,[[4,4]]);
+}
+function passOnMoves(){
+  document.getElementById('moves-overlay').classList.add('hidden');
+  if(lives>0) showOneTry();else realGameOver();
+}
+
+function showOneTry(){
+  const row=document.getElementById('omt-lives-row');row.innerHTML='';
+  for(let i=0;i<MAX_LIVES;i++){const s=document.createElement('span');s.textContent='❤️';s.style.opacity=i<lives?'1':'0.25';row.appendChild(s);}
+  document.getElementById('omt-sub').textContent=`Use one life (${lives} remaining) to continue with 10 extra moves.`;
+  document.getElementById('omt-overlay').classList.remove('hidden');
+}
+function useLifeContinue(){spendLife();document.getElementById('omt-overlay').classList.add('hidden');moves=10;pendingOverlay=false;updateStats();}
+function omtDecline(){document.getElementById('omt-overlay').classList.add('hidden');realGameOver();}
+
+/* ═══════════════════════════════
+   LEVEL COMPLETE
+   ═══════════════════════════════ */
+function nextVerse(){if(!verseQueue.length)rebuildQueue();const v=verseQueue[verseIdx%verseQueue.length];verseIdx++;return v;}
+
+function doLevelComplete(){
+  sndLevelUp();pendingOverlay=true;checkAchievements();
+  const v=nextVerse();currentVerse=v;
+  document.getElementById('sc-book-badge').textContent=v.book;
+  document.getElementById('sc-test-badge').textContent=v.testament;
+  document.getElementById('sc-test-badge').className='sc-badge '+(v.testament==='New Testament'?'nt':'ot');
+  document.getElementById('sc-text').textContent=`"${v.text}"`;
+  document.getElementById('sc-ref').textContent=`— ${v.ref}`;
+  document.getElementById('sc-trans').textContent=`${v.trans} · ${TRANSLATIONS.find(t=>t.key===v.trans)?.full||v.trans} · Public Domain`;
+  document.getElementById('sc-level').textContent=`✦ Level ${level} Complete! ✦`;
+  if(premium){
+    const extras=document.getElementById('extra-list');extras.innerHTML='';
+    const others=TRANSLATIONS.filter(t=>t.key!==activeTransKey&&versePool[t.key]?.length>0).slice(0,2);
+    if(others.length>0){
+      document.getElementById('extra-verses').style.display='block';
+      others.forEach(t=>{const match=versePool[t.key]?.find(x=>x.ref===v.ref);if(match){const d=document.createElement('div');d.className='extra-item';d.innerHTML=`<strong>${t.key}</strong>${match.text}`;extras.appendChild(d);}});
+    }
+  }else{document.getElementById('extra-verses').style.display='none';}
+  document.getElementById('cont-btn').dataset.ad=(!premium&&level%2===0)?'1':'0';
+  document.getElementById('sc-overlay').classList.remove('hidden');
+}
+
+function continueGame(){
+  const showAd=document.getElementById('cont-btn').dataset.ad==='1';
+  document.getElementById('sc-overlay').classList.add('hidden');
+  if(jackpotPending&&level===1){showJackpot();return;}
+  // Scripture quiz every 3 levels
+  if(level%3===0&&currentVerse){showQuiz(currentVerse);return;}
+  if(showAd){showInter();}else{nextLevel();}
+}
+
+/* ═══════════════════════════════
+   INTERSTITIAL
+   ═══════════════════════════════ */
+function showInter(){
+  skipCd=5;const btn=document.getElementById('skip-btn');btn.disabled=true;
+  document.getElementById('skip-note').textContent=`Skip in ${skipCd}s`;
+  document.getElementById('inter-verse').textContent=`"${nextVerse().text}"`;
+  document.getElementById('inter-overlay').classList.remove('hidden');
+  skipTimer=setInterval(()=>{skipCd--;if(skipCd<=0){clearInterval(skipTimer);btn.disabled=false;document.getElementById('skip-note').textContent='Thanks! 🙏';}else document.getElementById('skip-note').textContent=`Skip in ${skipCd}s`;},1000);
+}
+function skipAd(){clearInterval(skipTimer);document.getElementById('inter-overlay').classList.add('hidden');nextLevel();}
+
+function nextLevel(){
+  level++;levelGoal=Math.round(levelGoal*1.6);moves=MOVES_BASE+Math.floor(level/3)*5+(quizBonusMoves);
+  quizBonusMoves=0;buildGrid();render();pendingOverlay=false;updateStats();
+  checkAchievements();
+}
+
+/* ═══════════════════════════════
+   DAILY JACKPOT
+   ═══════════════════════════════ */
+const JACKPOT_ITEMS=[
+  {icon:'✨',label:'Bonus',pts:500},{icon:'🔥',label:'Fire',pts:750},
+  {icon:'💎',label:'Gems',pts:300},{icon:'⭐',label:'Star',pts:400},{icon:'👑',label:'Crown',pts:1000},
+];
+
+function showJackpot(){
+  jackpotPending=false;localStorage.setItem('sg_jackpot_date',new Date().toDateString());
+  const picks=[JACKPOT_ITEMS[Math.floor(Math.random()*JACKPOT_ITEMS.length)],JACKPOT_ITEMS[Math.floor(Math.random()*JACKPOT_ITEMS.length)],JACKPOT_ITEMS[Math.floor(Math.random()*JACKPOT_ITEMS.length)]];
+  jackpotBonus=picks[1].pts;
+  ['slot-0','slot-1','slot-2'].forEach(id=>document.getElementById(id).classList.remove('reveal'));
+  document.getElementById('slot-icon-0').textContent=picks[0].icon;
+  document.getElementById('slot-icon-1').textContent=picks[1].icon;
+  document.getElementById('slot-icon-2').textContent=picks[2].icon;
+  document.getElementById('jackpot-award').textContent=`+${jackpotBonus.toLocaleString()}`;
+  document.getElementById('jackpot-msg').textContent=`${picks[1].label} bonus! Keep your streak going.`;
+  document.getElementById('jackpot-overlay').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('slot-0').classList.add('reveal'),200);
+  setTimeout(()=>document.getElementById('slot-1').classList.add('reveal'),500);
+  setTimeout(()=>document.getElementById('slot-2').classList.add('reveal'),800);
+}
+function closeJackpot(){
+  document.getElementById('jackpot-overlay').classList.add('hidden');
+  score+=jackpotBonus;jackpotBonus=0;updateStats();
+  if(!premium&&level%2===0) showInter();else nextLevel();
+}
+
+/* ═══════════════════════════════
+   SCRIPTURE QUIZ
+   ═══════════════════════════════ */
+let quizCorrect=false, quizAnswered=false;
+
+function showQuiz(v){
+  quizAnswered=false;quizCorrect=false;
+  const qTypes=[
+    {q:`Which book is this verse from?`,correct:v.book,
+     wrongs:()=>shuffle(['Genesis','Psalms','John','Romans','Isaiah','Proverbs','Matthew','Revelation'].filter(b=>b!==v.book)).slice(0,3)},
+    {q:`Which testament does this verse belong to?`,correct:v.testament,
+     wrongs:()=>[v.testament==='New Testament'?'Old Testament':'New Testament','Apocrypha','Dead Sea Scrolls'].slice(0,3)},
+  ];
+  const qt=qTypes[Math.floor(Math.random()*qTypes.length)];
+  const opts=shuffle([qt.correct,...qt.wrongs()]);
+  document.getElementById('quiz-q').textContent=qt.q;
+  document.getElementById('quiz-result').textContent='';
+  document.getElementById('quiz-next').classList.add('hidden');
+  const optsEl=document.getElementById('quiz-opts');optsEl.innerHTML='';
+  opts.forEach(o=>{
+    const btn=document.createElement('button');btn.className='quiz-opt';btn.textContent=o;
+    btn.onclick=()=>{
+      if(quizAnswered) return;quizAnswered=true;
+      if(o===qt.correct){
+        btn.classList.add('correct');quizCorrect=true;
+        document.getElementById('quiz-result').textContent='✓ Correct! +5 bonus moves next level';
+        quizBonusMoves=5;
+      } else {
+        btn.classList.add('wrong');
+        optsEl.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===qt.correct)b.classList.add('correct');});
+        document.getElementById('quiz-result').textContent=`The answer was: ${qt.correct}`;
+      }
+      document.getElementById('quiz-next').classList.remove('hidden');
+    };
+    optsEl.appendChild(btn);
+  });
+  document.getElementById('quiz-overlay').classList.remove('hidden');
+}
+function quizNext(){
+  document.getElementById('quiz-overlay').classList.add('hidden');
+  if(document.getElementById('cont-btn').dataset.ad==='1')showInter();else nextLevel();
+}
+function quizSkip(){document.getElementById('quiz-overlay').classList.add('hidden');if(document.getElementById('cont-btn').dataset.ad==='1')showInter();else nextLevel();}
+
+/* ═══════════════════════════════
+   LEADERBOARD
+   ═══════════════════════════════ */
+function saveScore(){
+  try{const board=JSON.parse(localStorage.getItem('sg_scores')||'[]');board.push({score,level,date:new Date().toLocaleDateString()});board.sort((a,b)=>b.score-a.score);localStorage.setItem('sg_scores',JSON.stringify(board.slice(0,20)));}catch(e){}
+}
+function showLeaderboard(){
+  const board=JSON.parse(localStorage.getItem('sg_scores')||'[]');
+  const body=document.getElementById('lb-body');
+  if(!board.length){body.innerHTML='<div class="lb-empty">No scores yet. Play a game!</div>';}
+  else{
+    let html='<table class="lb-table"><thead><tr><th></th><th>Date</th><th>Lvl</th><th>Score</th></tr></thead><tbody>';
+    board.slice(0,10).forEach((s,i)=>{const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';html+=`<tr><td class="lb-rank${i<3?' top':''}">${m||'#'+(i+1)}</td><td>${s.date}</td><td>${s.level}</td><td>${s.score.toLocaleString()}</td></tr>`;});
+    html+='</tbody></table>';body.innerHTML=html;
+  }
+  document.getElementById('lb-overlay').classList.remove('hidden');
+}
+function closeLeaderboard(){document.getElementById('lb-overlay').classList.add('hidden');}
+
+/* ═══════════════════════════════
+   GAME OVER
+   ═══════════════════════════════ */
+function realGameOver(){
+  sndGameOver();saveScore();checkAchievements();
+  const v=nextVerse();
+  document.getElementById('go-level').textContent=level;
+  document.getElementById('go-score').textContent=score.toLocaleString();
+  document.getElementById('go-streak').textContent=streak;
+  document.getElementById('go-verse').textContent=`"${v.text}"`;
+  document.getElementById('go-ref').textContent=`— ${v.ref} · ${v.trans}`;
+  const ach=document.getElementById('go-achievements');ach.innerHTML='';
+  earnedAchievements.forEach(id=>{
+    const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;
+    const s=document.createElement('span');s.className='achieve-badge';s.textContent=`${a.icon} ${a.name}`;ach.appendChild(s);
+  });
+  document.getElementById('go-overlay').classList.remove('hidden');
+}
+
+/* ═══════════════════════════════
+   PREMIUM — Stripe Payment Links
+   ═══════════════════════════════ */
+function showPremium(){document.getElementById('prem-overlay').classList.remove('hidden');}
+function closePremium(){document.getElementById('prem-overlay').classList.add('hidden');}
+
+function buyPremium(){
+  if(RC.STRIPE_PREMIUM.includes('REPLACE')){
+    alert('Stripe payment link not configured yet. Check back soon!');return;
+  }
+  window.location.href=RC.STRIPE_PREMIUM;
+}
+
+function buyLives(){
+  if(RC.STRIPE_LIVES.includes('REPLACE')){
+    lives=MAX_LIVES;livesRegenStart=0;saveLives();updateLivesDisplay();closePremium();
+    return;
+  }
+  window.location.href=RC.STRIPE_LIVES;
+}
+
+function applyPremium(announce){
+  document.getElementById('ad-banner').style.display='none';
+  const b=document.getElementById('premium-btn');b.textContent='👑 Premium';b.classList.add('on');
+  if(announce) alert("Thank you! 🙏\n\nAds removed forever. Your $2.99 goes directly to Dancz Ministries — supporting free access to God's Word for everyone.\n\nParallel translations now unlocked.");
+}
+
+/* ═══════════════════════════════
+   UTILS
+   ═══════════════════════════════ */
+function hideAll(){
+  ['sc-overlay','inter-overlay','prem-overlay','go-overlay','streak-overlay',
+   'jackpot-overlay','omt-overlay','moves-overlay','lb-overlay','quiz-overlay']
+  .forEach(id=>document.getElementById(id)?.classList.add('hidden'));
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+init();
+</script>
+</body>
+</html>
