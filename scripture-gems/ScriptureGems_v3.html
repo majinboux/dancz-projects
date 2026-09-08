@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Scripture Gems — Dancz Ministries</title>
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;
+  --gold:#f0b429;--gold-dim:#a07a1a;--text:#e6edf3;--text-dim:#8b949e;
+  --gem-size:52px;--gap:4px;--red:#ff4757;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;user-select:none}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:999;gap:18px;padding:24px}
+#loading.hidden{display:none}
+.load-logo{font-size:26px;font-weight:800;color:var(--gold);text-align:center;letter-spacing:.04em}
+.load-logo small{display:block;font-size:12px;font-weight:400;color:var(--text-dim);margin-top:4px;letter-spacing:.08em;text-transform:uppercase}
+.load-bar-track{width:260px;height:5px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.load-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+  border-radius:99px;transition:width .3s ease}
+.load-verse{font-size:13px;font-style:italic;font-family:Georgia,serif;color:var(--text-dim);
+  text-align:center;max-width:300px;line-height:1.7;min-height:64px}
+.load-status{font-size:11px;color:var(--text-dim);text-align:center;letter-spacing:.04em}
+.pd-badge{font-size:10px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;
+  padding:3px 8px;color:var(--text-dim);letter-spacing:.06em}
+
+/* ── HEADER ── */
+header{width:100%;max-width:520px;padding:10px 14px 6px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.logo{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.05em;text-transform:uppercase;line-height:1.3}
+.logo small{display:block;font-size:9px;font-weight:400;color:var(--text-dim)}
+.header-right{display:flex;gap:6px;align-items:center}
+.streak-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:4px}
+.premium-btn{background:linear-gradient(135deg,#c9962a,var(--gold));color:#0d1117;border:none;
+  border-radius:20px;padding:5px 11px;font-size:10px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 10px rgba(240,180,41,.3);transition:transform .1s;white-space:nowrap}
+.premium-btn:active{transform:scale(.95)}
+.premium-btn.on{background:linear-gradient(135deg,#5a2d82,#a55eea);color:#fff}
+
+/* ── VOTD BANNER ── */
+#votd-banner{width:100%;max-width:520px;padding:0 12px 8px}
+.votd-inner{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:10px 14px;display:flex;gap:10px;align-items:flex-start}
+.votd-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.votd-body{}
+.votd-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:3px}
+.votd-text{font-size:12px;font-style:italic;font-family:Georgia,serif;color:var(--text);line-height:1.5}
+.votd-ref{font-size:10px;color:var(--text-dim);margin-top:3px}
+.votd-trans{font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;
+  padding:1px 5px;color:var(--gold-dim);display:inline-block;margin-top:3px}
+
+/* ── STATS ── */
+.stats{width:100%;max-width:520px;display:flex;gap:6px;padding:0 12px 8px}
+.stat-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:7px 8px;display:flex;flex-direction:column;align-items:center}
+.stat-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.stat-value{font-size:18px;font-weight:700;color:var(--gold);line-height:1}
+.stat-value.sm{font-size:13px;color:var(--text)}
+
+/* ── PROGRESS ── */
+.progress-wrap{width:100%;max-width:520px;padding:0 12px 8px}
+.progress-top{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-bottom:3px}
+.progress-bar{width:100%;height:5px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+  border-radius:99px;transition:width .4s ease}
+
+/* ── BOARD ── */
+.board-wrap{padding:0 10px;width:100%;max-width:520px;display:flex;justify-content:center}
+#board{display:grid;grid-template-columns:repeat(8,var(--gem-size));
+  grid-template-rows:repeat(8,var(--gem-size));gap:var(--gap);
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:7px;
+  box-shadow:0 4px 32px rgba(0,0,0,.6),0 0 0 1px rgba(240,180,41,.07)}
+
+/* ── GEMS ── */
+.gem{width:var(--gem-size);height:var(--gem-size);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;font-size:22px;
+  border:2px solid transparent;transition:transform .12s,box-shadow .12s,border-color .12s;position:relative;z-index:1}
+.gem:active{transform:scale(.88)}
+.gem.selected{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.5),0 0 18px rgba(255,255,255,.3);transform:scale(1.1);z-index:5}
+.gem.matched{animation:pop .32s forwards}
+@keyframes pop{0%{transform:scale(1.2);opacity:1}60%{transform:scale(1.6);opacity:.5}100%{transform:scale(0);opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .28s}
+.gem-0{background:linear-gradient(135deg,#ff6b81,#ff4757);box-shadow:0 2px 8px rgba(255,71,87,.35)}
+.gem-1{background:linear-gradient(135deg,#70c1ff,#3d9df2);box-shadow:0 2px 8px rgba(61,157,242,.35)}
+.gem-2{background:linear-gradient(135deg,#7bed9f,#2ed573);box-shadow:0 2px 8px rgba(46,213,115,.35)}
+.gem-3{background:linear-gradient(135deg,#ffe066,#ffd32a);box-shadow:0 2px 8px rgba(255,211,42,.35)}
+.gem-4{background:linear-gradient(135deg,#cd84f1,#a55eea);box-shadow:0 2px 8px rgba(165,94,234,.35)}
+.gem-5{background:linear-gradient(135deg,#ffbe76,#ff9f43);box-shadow:0 2px 8px rgba(255,159,67,.35)}
+.gem-6{background:linear-gradient(135deg,#f0f0f0,#dfe6e9);box-shadow:0 2px 8px rgba(223,230,233,.35)}
+
+/* ── CONTROLS ── */
+.controls{width:100%;max-width:520px;display:flex;gap:6px;padding:8px 12px 4px}
+.ctrl-btn{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:7px 6px;font-size:10px;color:var(--text-dim);cursor:pointer;font-weight:600;
+  text-align:center;transition:background .15s,color .15s}
+.ctrl-btn:hover{background:var(--surface2);color:var(--text)}
+
+/* ── TRANSLATION PICKER ── */
+#trans-picker{width:100%;max-width:520px;padding:0 12px 8px}
+.trans-inner{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.trans-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:8px}
+.trans-grid{display:flex;flex-wrap:wrap;gap:6px}
+.trans-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+  padding:5px 10px;font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all .15s}
+.trans-btn.active{background:rgba(240,180,41,.15);border-color:var(--gold);color:var(--gold)}
+.trans-pd{font-size:8px;color:var(--text-dim);margin-top:6px}
+.trans-pd span{color:#2ed573}
+
+/* ── AD BANNER ── */
+#ad-banner{width:100%;max-width:520px;padding:8px 12px 4px}
+.ad-wrap{background:var(--surface);border:1px dashed var(--border);border-radius:8px;height:52px;
+  display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text-dim);font-size:11px}
+.ad-tag{background:var(--surface2);border:1px solid var(--border);border-radius:3px;
+  padding:1px 5px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold-dim)}
+
+/* ── FLOAT ── */
+.float-score{position:fixed;font-size:15px;font-weight:800;color:var(--gold);
+  pointer-events:none;animation:float-up .8s forwards;z-index:200}
+@keyframes float-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-55px) scale(1.3)}}
+
+/* ── OVERLAYS ── */
+.overlay{position:fixed;inset:0;background:rgba(13,17,23,.93);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:100;padding:20px;backdrop-filter:blur(6px)}
+.overlay.hidden{display:none}
+
+/* ── SCRIPTURE CARD ── */
+.scripture-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:380px;width:100%;text-align:center;
+  box-shadow:0 16px 64px rgba(0,0,0,.7),0 0 0 1px rgba(240,180,41,.1);position:relative;overflow:hidden}
+.scripture-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.sc-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:10px}
+.sc-badges{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.sc-badge{font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;
+  padding:2px 8px;color:var(--text-dim);letter-spacing:.05em}
+.sc-badge.ot{color:#ffd32a}.sc-badge.nt{color:#3d9df2}.sc-badge.pd{color:#2ed573}
+.sc-text{font-size:17px;line-height:1.65;color:var(--text);font-style:italic;
+  font-family:Charter,"Bitstream Charter",Georgia,serif;margin-bottom:14px;max-height:180px;overflow-y:auto}
+.sc-ref{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:4px}
+.sc-trans{font-size:10px;color:var(--text-dim);margin-bottom:20px}
+.sc-level{font-size:11px;color:var(--text-dim);margin-bottom:16px;padding:4px 14px;
+  background:var(--surface2);border-radius:20px;display:inline-block}
+.sc-danczlink{font-size:10px;color:var(--text-dim);margin-bottom:18px;
+  display:block;padding:6px 10px;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.2);border-radius:6px}
+.sc-danczlink span{color:var(--gold)}
+.continue-btn{width:100%;padding:13px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0d1117;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.05em;box-shadow:0 4px 14px rgba(240,180,41,.4)}
+.extra-verses{margin-top:14px;text-align:left;border-top:1px solid var(--border);padding-top:12px}
+.extra-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:8px}
+.extra-item{font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:6px;
+  border-left:2px solid var(--border);padding-left:8px}
+.extra-item strong{color:var(--text);font-size:9px;text-transform:uppercase;display:block}
+
+/* ── INTERSTITIAL ── */
+.inter-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:22px;max-width:320px;width:100%;text-align:center;margin-bottom:12px}
+.inter-mock{background:var(--surface2);border:1px dashed var(--border);border-radius:8px;
+  height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;color:var(--text-dim);font-size:12px;margin-bottom:14px}
+.inter-mock .big{font-size:40px}
+.skip-btn{width:100%;padding:11px;background:var(--surface2);color:var(--text);
+  border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
+.skip-btn:disabled{opacity:.35;cursor:not-allowed}
+.skip-note{color:var(--text-dim);font-size:10px;margin-top:5px}
+.inter-verse{font-size:12px;font-style:italic;font-family:Georgia,serif;color:var(--text-dim);
+  margin-top:12px;line-height:1.6;padding:0 4px}
+
+/* ── STREAK CARD ── */
+.streak-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:340px;width:100%;text-align:center;
+  box-shadow:0 16px 64px rgba(0,0,0,.7)}
+.streak-fire{font-size:56px;margin-bottom:10px}
+.streak-num{font-size:48px;font-weight:800;color:var(--gold);line-height:1}
+.streak-label{font-size:13px;color:var(--text-dim);margin-bottom:16px}
+.streak-milestone{font-size:12px;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);
+  border-radius:8px;padding:8px 12px;margin-bottom:18px;color:var(--text)}
+.streak-close{width:100%;padding:12px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0d1117;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer}
+
+/* ── PREMIUM ── */
+.premium-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:26px 22px;max-width:340px;width:100%;text-align:center;
+  box-shadow:0 16px 64px rgba(0,0,0,.7),0 0 0 1px rgba(240,180,41,.12);position:relative;overflow:hidden}
+.premium-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),#ff9f43,var(--gold))}
+.prem-icon{font-size:44px;margin-bottom:10px}
+.prem-title{font-size:20px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.prem-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px;line-height:1.6}
+.prem-list{list-style:none;text-align:left;margin-bottom:20px;display:flex;flex-direction:column;gap:7px}
+.prem-list li{font-size:12px;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.prem-list li::before{content:'✦';color:var(--gold);font-size:9px;margin-top:2px;flex-shrink:0}
+.buy-btn{width:100%;padding:13px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0d1117;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;
+  margin-bottom:8px;box-shadow:0 4px 14px rgba(240,180,41,.4)}
+.close-prem{background:none;border:none;color:var(--text-dim);font-size:11px;cursor:pointer;padding:5px}
+
+/* ── GAME OVER ── */
+.go-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:28px 22px;max-width:340px;width:100%;text-align:center}
+.go-title{font-size:26px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.go-stats{font-size:13px;color:var(--text-dim);margin-bottom:14px}
+.go-verse{font-size:13px;font-style:italic;font-family:Georgia,serif;color:var(--text-dim);
+  line-height:1.65;margin-bottom:4px;padding:0 6px}
+.go-ref{font-size:11px;color:var(--gold);margin-bottom:20px}
+.go-danczlink{font-size:10px;color:var(--text-dim);margin-bottom:18px;display:block;
+  padding:6px 10px;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.2);border-radius:6px}
+.go-danczlink span{color:var(--gold)}
+.replay-btn{width:100%;padding:12px;background:linear-gradient(135deg,#c9962a,var(--gold));
+  color:#0d1117;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer}
+
+/* ── RESPONSIVE ── */
+@media(max-width:460px){:root{--gem-size:43px;--gap:3px}#board{padding:5px}.gem{font-size:18px;border-radius:8px}}
+@media(max-width:370px){:root{--gem-size:36px;--gap:2px}.gem{font-size:14px;border-radius:6px}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="load-logo">✦ Scripture Gems ✦<small>Dancz Ministries</small></div>
+  <div class="load-bar-track"><div class="load-bar-fill" id="load-bar"></div></div>
+  <div class="load-verse" id="load-verse">Preparing the Word…</div>
+  <div class="load-status" id="load-status">Loading…</div>
+  <div class="pd-badge">✦ Public Domain Scripture Only</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Scripture Gems<small>Dancz Ministries</small></div>
+  <div class="header-right">
+    <div class="streak-pill" id="streak-pill">🔥 <span id="streak-num">0</span></div>
+    <button class="premium-btn" id="premium-btn" onclick="showPremium()">✦ No Ads $2.99</button>
+  </div>
+</header>
+
+<!-- VERSE OF THE DAY -->
+<div id="votd-banner">
+  <div class="votd-inner">
+    <div class="votd-icon">📖</div>
+    <div class="votd-body">
+      <div class="votd-label">Verse of the Day</div>
+      <div class="votd-text" id="votd-text">Loading…</div>
+      <div class="votd-ref" id="votd-ref"></div>
+      <div class="votd-trans" id="votd-trans"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSLATION PICKER -->
+<div id="trans-picker">
+  <div class="trans-inner">
+    <div class="trans-label">Translation</div>
+    <div class="trans-grid" id="trans-grid"></div>
+    <div class="trans-pd"><span>✦ All green</span> = confirmed public domain</div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-card"><div class="stat-label">Score</div><div class="stat-value" id="score-el">0</div></div>
+  <div class="stat-card"><div class="stat-label">Level</div><div class="stat-value" id="level-el">1</div></div>
+  <div class="stat-card"><div class="stat-label">Moves</div><div class="stat-value sm" id="moves-el">30</div></div>
+  <div class="stat-card"><div class="stat-label">Best</div><div class="stat-value sm" id="best-el">0</div></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-top"><span>Level Progress</span><span id="prog-label">0 / 500</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<!-- BOARD -->
+<div class="board-wrap"><div id="board"></div></div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="ctrl-btn" onclick="showHint()">💡 Hint</button>
+  <button class="ctrl-btn" onclick="shuffleBoard()">🔀 Shuffle</button>
+  <button class="ctrl-btn" onclick="showPremium()">👑 Premium</button>
+</div>
+
+<!-- AD BANNER -->
+<div id="ad-banner">
+  <div class="ad-wrap"><span class="ad-tag">Ad</span><span>Advertisement · supports Dancz Ministries</span></div>
+</div>
+
+<!-- ══ OVERLAYS ══ -->
+<!-- Scripture -->
+<div class="overlay hidden" id="sc-overlay">
+  <div class="scripture-card">
+    <div class="sc-eyebrow">✦ Word of the Lord ✦</div>
+    <div class="sc-badges">
+      <span class="sc-badge" id="sc-book-badge"></span>
+      <span class="sc-badge" id="sc-test-badge"></span>
+      <span class="sc-badge pd">✦ Public Domain</span>
+    </div>
+    <div class="sc-text" id="sc-text"></div>
+    <div class="sc-ref" id="sc-ref"></div>
+    <div class="sc-trans" id="sc-trans"></div>
+    <div class="sc-level" id="sc-level"></div>
+    <div class="extra-verses" id="extra-verses" style="display:none">
+      <div class="extra-label">Same Chapter — Parallel Translations</div>
+      <div id="extra-list"></div>
+    </div>
+    <a class="sc-danczlink" href="https://danczministries.com" target="_blank">
+      Read the full chapter with original Hebrew &amp; Greek at <span>danczministries.com</span>
+    </a>
+    <button class="continue-btn" id="cont-btn" onclick="continueGame()">Continue ›</button>
+  </div>
+</div>
+
+<!-- Interstitial Ad -->
+<div class="overlay hidden" id="inter-overlay">
+  <div class="inter-card">
+    <div class="inter-mock">
+      <div class="big">📱</div>
+      <div class="ad-tag">Advertisement</div>
+      <div>Your ad appears here</div>
+      <div style="font-size:10px;margin-top:4px;">~30s rewarded video · CPM $10–$25</div>
+    </div>
+    <button class="skip-btn" id="skip-btn" onclick="skipAd()" disabled>Skip ▶</button>
+    <div class="skip-note" id="skip-note">Skip available in 5s</div>
+    <div class="inter-verse" id="inter-verse"></div>
+  </div>
+  <div style="font-size:10px;color:var(--text-dim);text-align:center;max-width:280px;margin-top:10px">
+    Ads keep Scripture Gems free.<br>Remove forever for $2.99 · all proceeds to Dancz Ministries.
+  </div>
+</div>
+
+<!-- Streak -->
+<div class="overlay hidden" id="streak-overlay">
+  <div class="streak-card">
+    <div class="streak-fire">🔥</div>
+    <div class="streak-num" id="streak-display">1</div>
+    <div class="streak-label">Day Streak</div>
+    <div class="streak-milestone" id="streak-msg"></div>
+    <button class="streak-close" onclick="closeStreak()">Keep Playing ›</button>
+  </div>
+</div>
+
+<!-- Premium -->
+<div class="overlay hidden" id="prem-overlay">
+  <div class="premium-card">
+    <div class="prem-icon">👑</div>
+    <div class="prem-title">Scripture Gems Premium</div>
+    <div class="prem-sub">One-time purchase. Every dollar goes directly to Dancz Ministries. The Word always stays — premium just removes the ads.</div>
+    <ul class="prem-list">
+      <li>No banner ads</li>
+      <li>No interstitial ads between levels</li>
+      <li>All 7 public domain translations unlocked</li>
+      <li>Parallel translation view on every scripture card</li>
+      <li>Gold board theme</li>
+      <li>Directly supports free Bible access at danczministries.com</li>
+    </ul>
+    <button class="buy-btn" onclick="buyPremium()">Remove Ads Forever — $2.99</button>
+    <button class="close-prem" onclick="closePremium()">No thanks, keep ads</button>
+  </div>
+</div>
+
+<!-- Game Over -->
+<div class="overlay hidden" id="go-overlay">
+  <div class="go-card">
+    <div class="go-title">Well Played</div>
+    <div class="go-stats">Level <span id="go-level">1</span> · Score <span id="go-score">0</span> · Streak 🔥<span id="go-streak">0</span></div>
+    <div class="go-verse" id="go-verse"></div>
+    <div class="go-ref" id="go-ref"></div>
+    <a class="go-danczlink" href="https://danczministries.com" target="_blank">
+      Dive deeper at <span>danczministries.com</span> — free Hebrew, Greek &amp; chronology
+    </a>
+    <button class="replay-btn" onclick="startGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   PUBLIC DOMAIN TRANSLATIONS
+   All confirmed pre-1928, US public domain
+   ══════════════════════════════════════ */
+const TRANSLATIONS = [
+  {
+    key:'KJV', label:'KJV', year:1611, full:'King James Version (1611)',
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/KJV.json',
+    cacheKey:'sg_kjv_v2', format:'biblelua',
+  },
+  {
+    key:'ASV', label:'ASV', year:1901, full:'American Standard Version (1901)',
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/ASV.json',
+    cacheKey:'sg_asv_v1', format:'biblelua',
+  },
+  {
+    key:'YLT', label:"Young's", year:1898, full:"Young's Literal Translation (1898)",
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/YLT.json',
+    cacheKey:'sg_ylt_v1', format:'biblelua',
+  },
+  {
+    key:'DARBY', label:'Darby', year:1890, full:'Darby Bible (1890)',
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/DARBY.json',
+    cacheKey:'sg_darby_v1', format:'biblelua',
+  },
+  {
+    key:'WBT', label:'Webster', year:1833, full:"Webster's Bible Translation (1833)",
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/WBT.json',
+    cacheKey:'sg_wbt_v1', format:'biblelua',
+  },
+  {
+    key:'WEYMOUTH', label:'Weymouth', year:1903, full:'Weymouth NT (1903)',
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/WEYMOUTH.json',
+    cacheKey:'sg_weymouth_v1', format:'biblelua',
+  },
+  {
+    key:'ROTHERHAM', label:'Rotherham', year:1902, full:"Rotherham's Emphasized Bible (1902)",
+    url:'https://raw.githubusercontent.com/majinboux/biblelua-data/main/bible/ROTHERHAM.json',
+    cacheKey:'sg_roth_v1', format:'biblelua',
+  },
+];
+
+const CACHE_TTL = 86400000 * 7;
+
+/* ── FALLBACK (always embedded, zero fetch) ── */
+const FALLBACK = [
+  {text:"In the beginning God created the heaven and the earth.",ref:"Genesis 1:1",book:"Genesis",testament:"Old Testament",trans:"KJV"},
+  {text:"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",ref:"John 3:16",book:"John",testament:"New Testament",trans:"KJV"},
+  {text:"The LORD is my shepherd; I shall not want.",ref:"Psalm 23:1",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"I can do all things through Christ which strengtheneth me.",ref:"Philippians 4:13",book:"Philippians",testament:"New Testament",trans:"KJV"},
+  {text:"Trust in the LORD with all thine heart; and lean not unto thine own understanding.",ref:"Proverbs 3:5",book:"Proverbs",testament:"Old Testament",trans:"KJV"},
+  {text:"Be still, and know that I am God.",ref:"Psalm 46:10",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"For the invisible things of him from the creation of the world are clearly seen, being understood by the things that are made.",ref:"Romans 1:20",book:"Romans",testament:"New Testament",trans:"KJV"},
+  {text:"Thy word is a lamp unto my feet, and a light unto my path.",ref:"Psalm 119:105",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"Come unto me, all ye that labour and are heavy laden, and I will give you rest.",ref:"Matthew 11:28",book:"Matthew",testament:"New Testament",trans:"KJV"},
+  {text:"And we know that all things work together for good to them that love God.",ref:"Romans 8:28",book:"Romans",testament:"New Testament",trans:"KJV"},
+  {text:"The fear of the LORD is the beginning of wisdom.",ref:"Proverbs 9:10",book:"Proverbs",testament:"Old Testament",trans:"KJV"},
+  {text:"Create in me a clean heart, O God; and renew a right spirit within me.",ref:"Psalm 51:10",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"For by grace are ye saved through faith; and that not of yourselves: it is the gift of God.",ref:"Ephesians 2:8",book:"Ephesians",testament:"New Testament",trans:"KJV"},
+  {text:"Delight thyself also in the LORD: and he shall give thee the desires of thine heart.",ref:"Psalm 37:4",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"I am the way, the truth, and the life: no man cometh unto the Father, but by me.",ref:"John 14:6",book:"John",testament:"New Testament",trans:"KJV"},
+  {text:"Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me.",ref:"Psalm 23:4",book:"Psalms",testament:"Old Testament",trans:"KJV"},
+  {text:"But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you.",ref:"Matthew 6:33",book:"Matthew",testament:"New Testament",trans:"KJV"},
+  {text:"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",ref:"2 Timothy 1:7",book:"2 Timothy",testament:"New Testament",trans:"KJV"},
+  {text:"Greater love hath no man than this, that a man lay down his life for his friends.",ref:"John 15:13",book:"John",testament:"New Testament",trans:"KJV"},
+  {text:"But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles.",ref:"Isaiah 40:31",book:"Isaiah",testament:"Old Testament",trans:"KJV"},
+];
+
+/* ══════════════════════════════════════
+   GEMS
+   ══════════════════════════════════════ */
+const GEMS = [
+  {e:'🔴',n:'Ruby'},{e:'🔵',n:'Sapphire'},{e:'🟢',n:'Emerald'},
+  {e:'🟡',n:'Topaz'},{e:'🟣',n:'Amethyst'},{e:'🟠',n:'Citrine'},{e:'⚪',n:'Pearl'},
+];
+
+/* ══════════════════════════════════════
+   STATE
+   ══════════════════════════════════════ */
+const GRID=8, GEM_N=7, MOVES_BASE=30;
+let versePool={}, activeTransKey='KJV', verseQueue=[], verseIdx=0;
+let grid=[], score=0, level=1, moves=MOVES_BASE, levelGoal=500;
+let selected=null, animating=false, pendingOverlay=false;
+let bestScore=parseInt(localStorage.getItem('sg_best')||'0');
+let premium=localStorage.getItem('sg_prem')==='1';
+let streak=parseInt(localStorage.getItem('sg_streak')||'0');
+let lastPlayed=localStorage.getItem('sg_last')||'';
+let skipTimer=null, skipCd=5;
+
+/* ══════════════════════════════════════
+   LOADING
+   ══════════════════════════════════════ */
+async function init(){
+  buildTransPicker();
+  checkStreak();
+  await loadTranslation('KJV');
+  setVOTD();
+  await sleep(300);
+  document.getElementById('loading').classList.add('hidden');
+  if(premium) applyPremium(false);
+  startGame();
+}
+
+async function loadTranslation(key){
+  const t=TRANSLATIONS.find(x=>x.key===key);
+  if(!t) return;
+  if(versePool[key]&&versePool[key].length>50) return;
+
+  setLoad(10,`Loading ${t.full}…`);
+
+  // try cache
+  try{
+    const c=localStorage.getItem(t.cacheKey);
+    const ts=parseInt(localStorage.getItem(t.cacheKey+'_ts')||'0');
+    if(c&&(Date.now()-ts)<CACHE_TTL){
+      const p=JSON.parse(c);
+      if(p.length>50){versePool[key]=p;setLoad(100,`${p.length.toLocaleString()} verses ready (cached)`);return;}
+    }
+  }catch(e){}
+
+  setLoad(20,`Fetching ${key} from your GitHub repo…`);
+  try{
+    const res=await fetch(t.url);
+    if(!res.ok) throw new Error('fetch failed');
+    setLoad(50,'Parsing…');
+    const data=await res.json();
+    setLoad(70,'Indexing verses…');
+    const parsed=parseBiblelua(data,key);
+    setLoad(88,'Caching…');
+    versePool[key]=parsed;
+    try{localStorage.setItem(t.cacheKey,JSON.stringify(parsed));localStorage.setItem(t.cacheKey+'_ts',Date.now());}catch(e){}
+    setLoad(100,`${parsed.length.toLocaleString()} ${key} verses ready`);
+  }catch(err){
+    console.warn('fetch failed, using fallback',err);
+    versePool[key]=FALLBACK.filter(v=>v.trans===key||key==='KJV');
+    if(!versePool[key].length) versePool[key]=FALLBACK;
+    setLoad(100,`Using ${versePool[key].length} embedded verses`);
+  }
+}
+
+function parseBiblelua(data,key){
+  const parsed=[];
+  const books=data.books||{};
+  for(const bk of Object.values(books)){
+    const book=bk.book_name||'';
+    const testament=bk.testament==='NT'?'New Testament':'Old Testament';
+    const chapters=bk.chapters||{};
+    for(const[ch,vv] of Object.entries(chapters)){
+      for(const[vn,txt] of Object.entries(vv)){
+        if(typeof txt==='string'&&txt.trim().length>=18&&txt.trim().length<=320){
+          parsed.push({text:txt.trim(),ref:`${book} ${ch}:${vn}`,book,testament,trans:key});
+        }
+      }
+    }
+  }
+  return parsed;
+}
+
+function setLoad(pct,msg){
+  document.getElementById('load-bar').style.width=pct+'%';
+  document.getElementById('load-status').textContent=msg;
+  const pool=versePool['KJV']||FALLBACK;
+  if(pool.length>0){
+    const v=pool[Math.floor(Math.random()*Math.min(pool.length,200))];
+    document.getElementById('load-verse').textContent=`"${v.text.slice(0,110)}${v.text.length>110?'…':''}"`;
+  }
+}
+
+/* ══════════════════════════════════════
+   VERSE OF THE DAY (deterministic by date)
+   ══════════════════════════════════════ */
+function setVOTD(){
+  const pool=versePool['KJV']||FALLBACK;
+  const dayIdx=Math.floor(Date.now()/86400000)%pool.length;
+  const v=pool[dayIdx];
+  document.getElementById('votd-text').textContent=`"${v.text}"`;
+  document.getElementById('votd-ref').textContent=`— ${v.ref}`;
+  document.getElementById('votd-trans').textContent=v.trans+' — Public Domain ✦';
+}
+
+/* ══════════════════════════════════════
+   TRANSLATION PICKER
+   ══════════════════════════════════════ */
+function buildTransPicker(){
+  const grid=document.getElementById('trans-grid');
+  grid.innerHTML='';
+  TRANSLATIONS.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='trans-btn'+(t.key===activeTransKey?' active':'');
+    btn.textContent=t.label;
+    btn.title=t.full;
+    btn.onclick=async()=>{
+      activeTransKey=t.key;
+      document.querySelectorAll('.trans-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      setLoad(0,'');document.getElementById('loading').classList.remove('hidden');
+      await loadTranslation(t.key);
+      rebuildQueue();
+      setVOTD();
+      document.getElementById('loading').classList.add('hidden');
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function rebuildQueue(){
+  const pool=versePool[activeTransKey]||FALLBACK;
+  verseQueue=shuffle([...pool]);
+  verseIdx=0;
+}
+
+/* ══════════════════════════════════════
+   STREAK
+   ══════════════════════════════════════ */
+function checkStreak(){
+  const today=new Date().toDateString();
+  if(lastPlayed===today){
+    // already played today — no change
+  } else if(lastPlayed===new Date(Date.now()-86400000).toDateString()){
+    streak++;
+    localStorage.setItem('sg_streak',streak);
+    localStorage.setItem('sg_last',today);
+    if(streak>1) showStreak();
+  } else {
+    if(lastPlayed) streak=1;
+    else streak=1;
+    localStorage.setItem('sg_streak',streak);
+    localStorage.setItem('sg_last',today);
+  }
+  document.getElementById('streak-num').textContent=streak;
+}
+
+function showStreak(){
+  document.getElementById('streak-display').textContent=streak;
+  let msg='';
+  if(streak>=365) msg='🏆 One full year — extraordinary!';
+  else if(streak>=100) msg='💎 100 days — you are remarkable.';
+  else if(streak>=30) msg='⭐ 30 days — a whole month. Well done.';
+  else if(streak>=7) msg='🔥 Seven days straight — this is a habit.';
+  else msg=`Day ${streak} — keep going. The Word awaits.`;
+  document.getElementById('streak-msg').textContent=msg;
+  document.getElementById('streak-overlay').classList.remove('hidden');
+}
+
+function closeStreak(){document.getElementById('streak-overlay').classList.add('hidden');}
+
+/* ══════════════════════════════════════
+   GAME
+   ══════════════════════════════════════ */
+function startGame(){
+  hideAll();
+  score=0;level=1;moves=MOVES_BASE;levelGoal=500;selected=null;pendingOverlay=false;
+  rebuildQueue();
+  buildGrid();render();updateStats();
+}
+
+function buildGrid(){
+  do{grid=Array.from({length:GRID},()=>Array.from({length:GRID},()=>Math.floor(Math.random()*GEM_N)));}
+  while(findMatches().length>0);
+}
+
+function render(){
+  const b=document.getElementById('board');
+  b.innerHTML='';
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    const el=document.createElement('div');
+    el.className=`gem gem-${grid[r][c]}`;
+    el.textContent=GEMS[grid[r][c]].e;
+    if(selected&&selected[0]===r&&selected[1]===c) el.classList.add('selected');
+    el.addEventListener('click',()=>handleClick(r,c));
+    b.appendChild(el);
+  }
+}
+
+function handleClick(r,c){
+  if(animating||pendingOverlay) return;
+  if(!selected){selected=[r,c];render();return;}
+  const[sr,sc]=selected;
+  if(sr===r&&sc===c){selected=null;render();return;}
+  if(!adj(sr,sc,r,c)){selected=[r,c];render();return;}
+  selected=null;
+  doSwap(sr,sc,r,c);
+}
+
+function adj(r1,c1,r2,c2){return(Math.abs(r1-r2)===1&&c1===c2)||(Math.abs(c1-c2)===1&&r1===r2);}
+
+async function doSwap(r1,c1,r2,c2){
+  animating=true;
+  swap(r1,c1,r2,c2);
+  if(findMatches().length===0){
+    swap(r1,c1,r2,c2);render();
+    shakeIdx(r1,c1);shakeIdx(r2,c2);
+    animating=false;return;
+  }
+  moves--;
+  await resolve();
+  updateStats();
+  animating=false;
+  if(score>=levelGoal){doLevelComplete();return;}
+  if(moves<=0){doGameOver();}
+}
+
+function swap(r1,c1,r2,c2){[grid[r1][c1],grid[r2][c2]]=[grid[r2][c2],grid[r1][c1]];}
+
+function findMatches(){
+  const s=new Set();
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID-2;c++){
+    const t=grid[r][c];if(t===grid[r][c+1]&&t===grid[r][c+2]){
+      let l=3;while(c+l<GRID&&grid[r][c+l]===t)l++;
+      for(let i=0;i<l;i++)s.add(`${r},${c+i}`);
+    }
+  }
+  for(let c=0;c<GRID;c++)for(let r=0;r<GRID-2;r++){
+    const t=grid[r][c];if(t===grid[r+1][c]&&t===grid[r+2][c]){
+      let l=3;while(r+l<GRID&&grid[r+l][c]===t)l++;
+      for(let i=0;i<l;i++)s.add(`${r+i},${c}`);
+    }
+  }
+  return[...s].map(k=>k.split(',').map(Number));
+}
+
+async function resolve(){
+  let chain=0;
+  while(true){
+    const m=findMatches();
+    if(!m.length)break;
+    chain++;
+    const pts=m.length*10*chain;
+    score+=pts;
+    showFloat(`+${pts}`,m);
+    await animateMatch(m);
+    drop();
+    await sleep(180);render();await sleep(70);
+  }
+}
+
+function animateMatch(m){
+  return new Promise(res=>{
+    const els=document.querySelectorAll('.gem');
+    m.forEach(([r,c])=>{els[r*GRID+c]?.classList.add('matched');grid[r][c]=-1;});
+    setTimeout(res,340);
+  });
+}
+
+function drop(){
+  for(let c=0;c<GRID;c++){
+    let e=GRID-1;
+    for(let r=GRID-1;r>=0;r--){
+      if(grid[r][c]!==-1){grid[e][c]=grid[r][c];if(e!==r)grid[r][c]=-1;e--;}
+    }
+    for(let r=e;r>=0;r--)grid[r][c]=Math.floor(Math.random()*GEM_N);
+  }
+}
+
+/* ══════════════════════════════════════
+   HINT & SHUFFLE
+   ══════════════════════════════════════ */
+function showHint(){
+  for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++){
+    const dirs=[[0,1],[1,0]];
+    for(const[dr,dc] of dirs){
+      const r2=r+dr,c2=c+dc;
+      if(r2>=GRID||c2>=GRID)continue;
+      swap(r,c,r2,c2);
+      if(findMatches().length>0){swap(r,c,r2,c2);pulseHint(r,c);pulseHint(r2,c2);return;}
+      swap(r,c,r2,c2);
+    }
+  }
+  shuffleBoard();
+}
+
+function pulseHint(r,c){
+  const el=document.querySelectorAll('.gem')[r*GRID+c];
+  if(!el)return;
+  el.classList.add('hint');
+  el.addEventListener('animationend',()=>el.classList.remove('hint'),{once:true});
+}
+
+function shuffleBoard(){
+  do{for(let r=0;r<GRID;r++)for(let c=0;c<GRID;c++)grid[r][c]=Math.floor(Math.random()*GEM_N);}
+  while(findMatches().length>0);
+  render();
+}
+
+/* ══════════════════════════════════════
+   FLOAT SCORE
+   ══════════════════════════════════════ */
+function showFloat(text,cells){
+  const b=document.getElementById('board');
+  const rect=b.getBoundingClientRect();
+  const gs=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gem-size'));
+  const gp=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gap'));
+  const[r,c]=cells[cells.length>>1];
+  const el=document.createElement('div');
+  el.className='float-score';
+  el.textContent=text;
+  el.style.left=`${rect.left+7+c*(gs+gp)+gs/2}px`;
+  el.style.top=`${rect.top+7+r*(gs+gp)}px`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),900);
+}
+
+function shakeIdx(r,c){
+  const el=document.querySelectorAll('.gem')[r*GRID+c];
+  if(!el)return;
+  el.classList.add('shake');
+  el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});
+}
+
+/* ══════════════════════════════════════
+   STATS
+   ══════════════════════════════════════ */
+function updateStats(){
+  document.getElementById('score-el').textContent=score.toLocaleString();
+  document.getElementById('level-el').textContent=level;
+  document.getElementById('moves-el').textContent=moves;
+  if(score>bestScore){bestScore=score;localStorage.setItem('sg_best',bestScore);}
+  document.getElementById('best-el').textContent=bestScore.toLocaleString();
+  const pct=Math.min((score/levelGoal)*100,100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=`${score.toLocaleString()} / ${levelGoal.toLocaleString()}`;
+  document.getElementById('streak-num').textContent=streak;
+}
+
+/* ══════════════════════════════════════
+   LEVEL COMPLETE
+   ══════════════════════════════════════ */
+function nextVerse(){
+  if(!verseQueue.length) rebuildQueue();
+  const v=verseQueue[verseIdx%verseQueue.length];verseIdx++;
+  return v;
+}
+
+function doLevelComplete(){
+  pendingOverlay=true;
+  const v=nextVerse();
+  document.getElementById('sc-book-badge').textContent=v.book;
+  document.getElementById('sc-book-badge').className='sc-badge';
+  document.getElementById('sc-test-badge').textContent=v.testament;
+  document.getElementById('sc-test-badge').className='sc-badge '+(v.testament==='New Testament'?'nt':'ot');
+  document.getElementById('sc-text').textContent=`"${v.text}"`;
+  document.getElementById('sc-ref').textContent=`— ${v.ref}`;
+  document.getElementById('sc-trans').textContent=`${v.trans} · ${TRANSLATIONS.find(t=>t.key===v.trans)?.full||v.trans} · Public Domain`;
+  document.getElementById('sc-level').textContent=`✦ Level ${level} Complete! ✦`;
+
+  // parallel verses (premium feature)
+  if(premium){
+    const extras=document.getElementById('extra-list');
+    extras.innerHTML='';
+    const otherTrans=TRANSLATIONS.filter(t=>t.key!==activeTransKey&&versePool[t.key]?.length>0).slice(0,2);
+    if(otherTrans.length>0){
+      document.getElementById('extra-verses').style.display='block';
+      otherTrans.forEach(t=>{
+        const pool=versePool[t.key];
+        const match=pool.find(x=>x.ref===v.ref);
+        if(match){
+          const d=document.createElement('div');
+          d.className='extra-item';
+          d.innerHTML=`<strong>${t.key}</strong>${match.text}`;
+          extras.appendChild(d);
+        }
+      });
+    }
+  } else {
+    document.getElementById('extra-verses').style.display='none';
+  }
+
+  document.getElementById('cont-btn').dataset.ad=(!premium&&level%2===0)?'1':'0';
+  document.getElementById('sc-overlay').classList.remove('hidden');
+}
+
+function continueGame(){
+  const showAd=document.getElementById('cont-btn').dataset.ad==='1';
+  document.getElementById('sc-overlay').classList.add('hidden');
+  if(showAd){showInter();}else{nextLevel();}
+}
+
+function showInter(){
+  skipCd=5;
+  const btn=document.getElementById('skip-btn');
+  btn.disabled=true;
+  document.getElementById('skip-note').textContent=`Skip in ${skipCd}s`;
+  // show a verse during the ad
+  const v=nextVerse();
+  document.getElementById('inter-verse').textContent=`"${v.text}" — ${v.ref}`;
+  document.getElementById('inter-overlay').classList.remove('hidden');
+  skipTimer=setInterval(()=>{
+    skipCd--;
+    if(skipCd<=0){clearInterval(skipTimer);btn.disabled=false;document.getElementById('skip-note').textContent='Thanks for watching! 🙏';}
+    else document.getElementById('skip-note').textContent=`Skip in ${skipCd}s`;
+  },1000);
+}
+
+function skipAd(){clearInterval(skipTimer);document.getElementById('inter-overlay').classList.add('hidden');nextLevel();}
+
+function nextLevel(){
+  level++;levelGoal=Math.round(levelGoal*1.6);moves=MOVES_BASE+Math.floor(level/3)*5;
+  buildGrid();render();pendingOverlay=false;updateStats();
+}
+
+/* ══════════════════════════════════════
+   GAME OVER
+   ══════════════════════════════════════ */
+function doGameOver(){
+  const v=nextVerse();
+  document.getElementById('go-level').textContent=level;
+  document.getElementById('go-score').textContent=score.toLocaleString();
+  document.getElementById('go-streak').textContent=streak;
+  document.getElementById('go-verse').textContent=`"${v.text}"`;
+  document.getElementById('go-ref').textContent=`— ${v.ref} · ${v.trans}`;
+  document.getElementById('go-overlay').classList.remove('hidden');
+}
+
+/* ══════════════════════════════════════
+   PREMIUM
+   ══════════════════════════════════════ */
+function showPremium(){document.getElementById('prem-overlay').classList.remove('hidden');}
+function closePremium(){document.getElementById('prem-overlay').classList.add('hidden');}
+function buyPremium(){
+  premium=true;localStorage.setItem('sg_prem','1');
+  applyPremium(true);closePremium();
+}
+function applyPremium(announce){
+  document.getElementById('ad-banner').style.display='none';
+  const b=document.getElementById('premium-btn');
+  b.textContent='👑 Premium';b.classList.add('on');
+  if(announce) alert('Thank you! 🙏\n\nAds removed forever. Your $2.99 goes directly to Dancz Ministries — supporting free access to God\'s Word for everyone.\n\nParallel translations are now unlocked on every scripture card.');
+}
+
+/* ══════════════════════════════════════
+   UTILS
+   ══════════════════════════════════════ */
+function hideAll(){['sc-overlay','inter-overlay','prem-overlay','go-overlay','streak-overlay'].forEach(id=>document.getElementById(id).classList.add('hidden'));}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* ── START ── */
+init();
+</script>
+</body>
+</html>
