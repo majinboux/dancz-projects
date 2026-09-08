@@ -1,0 +1,969 @@
+<title>Sanctum Tutorial Script</title>
+<style>
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181A; --surface: #1D1F22; --ink: #E4E4E0; --ink-dim: #8B8D89;
+      --line: #3A3C3F; --accent: #8FA3C4; --quote-bg: #202225; --tag-bg: #23282E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181A; --surface: #1D1F22; --ink: #E4E4E0; --ink-dim: #8B8D89;
+    --line: #3A3C3F; --accent: #8FA3C4; --quote-bg: #202225; --tag-bg: #23282E;
+  }
+  :root {
+    --bg: #F5F5F2; --surface: #FFFFFF; --ink: #1C1C1C; --ink-dim: #6B6B66;
+    --line: #D8D8D2; --accent: #46587A; --quote-bg: #EFEFEA; --tag-bg: #E8E9E4;
+    --font-body: Charter, "Bitstream Charter", "Sitka Text", Georgia, serif;
+    --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.55; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.4rem 5rem; }
+
+  .eyebrow { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); margin: 0 0 0.7rem; }
+  h1 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); font-weight: 600; margin: 0 0 0.8rem; text-wrap: balance; }
+  .dek { font-size: 1rem; color: var(--ink-dim); margin: 0 0 1.2rem; }
+  .correction { border: 1px solid var(--line); background: var(--surface); border-radius: 4px; padding: 1rem 1.2rem; margin-bottom: 1rem; font-size: 0.92rem; }
+  .correction .lbl { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); display: block; margin-bottom: 0.4rem; }
+  .sources { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-dim); line-height: 1.8; margin: 0 0 2.2rem; }
+  .sources code { background: var(--tag-bg); padding: 0.03rem 0.3rem; border-radius: 2px; }
+
+  .toc { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2.6rem; padding-bottom: 1.6rem; border-bottom: 1px solid var(--line); }
+  .toc a { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); border-radius: 3px; padding: 0.25rem 0.55rem; }
+  .toc a:hover { color: var(--ink); border-color: var(--accent); }
+
+  .scene { padding: 2.2rem 0; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+  .scene:first-of-type { border-top: none; }
+  .scene-head { margin-bottom: 0.9rem; }
+  .filetag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); display: block; margin-bottom: 0.3rem; }
+  .scene h2 { font-size: 1.35rem; margin: 0 0 0.15rem; font-weight: 600; }
+  .subtitle { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-dim); }
+
+  .corresp { font-size: 0.88rem; background: var(--quote-bg); border-left: 2px solid var(--accent); padding: 0.6rem 0.9rem; margin: 0.9rem 0 1.1rem; border-radius: 0 3px 3px 0; }
+  .corresp b { color: var(--ink); }
+
+  blockquote.speak { font-style: italic; font-size: 1.02rem; margin: 0 0 1rem; padding-left: 1rem; border-left: 2px solid var(--line); color: var(--ink); }
+  blockquote.speak footer { font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; color: var(--ink-dim); margin-top: 0.2rem; }
+
+  h3 { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-dim); margin: 1.3rem 0 0.5rem; font-weight: 600; }
+
+  ol.teach { margin: 0; padding-left: 1.3rem; }
+  ol.teach li { margin-bottom: 0.4rem; font-size: 0.94rem; }
+  ol.teach li .key { font-family: var(--font-mono); font-size: 0.72rem; background: var(--tag-bg); padding: 0.02rem 0.35rem; border-radius: 2px; margin-left: 0.35rem; }
+
+  table.objects { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  table.objects th { text-align: left; font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-dim); font-weight: 600; padding: 0.3rem 0.6rem 0.3rem 0; border-bottom: 1px solid var(--line); }
+  table.objects td { padding: 0.45rem 0.6rem 0.45rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.objects td.obj { white-space: nowrap; font-weight: 600; }
+  table.objects td.cite { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); white-space: nowrap; }
+
+  .choices { display: grid; gap: 0.6rem; margin: 0.4rem 0; }
+  .choice { background: var(--quote-bg); border-radius: 3px; padding: 0.6rem 0.85rem; font-size: 0.9rem; }
+  .choice .obj { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 0.2rem; }
+
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; font-size: 0.86rem; margin: 0.3rem 0; }
+  .facts dt { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-dim); }
+  .facts dd { margin: 0; }
+  .facts code { font-family: var(--font-mono); font-size: 0.82rem; background: var(--tag-bg); padding: 0.02rem 0.35rem; border-radius: 2px; }
+
+  .close-line { font-size: 0.94rem; margin: 0.3rem 0; }
+  .close-line .lbl { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-dim); margin-right: 0.4rem; }
+
+  .devnotes { margin-top: 0.5rem; }
+  .devnotes li { font-size: 0.85rem; margin-bottom: 0.55rem; padding-left: 0.9rem; position: relative; color: var(--ink-dim); }
+  .devnotes li::before { content: "—"; position: absolute; left: 0; }
+  .devnotes li b { color: var(--ink); font-weight: 600; }
+
+  footer.page { margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-dim); line-height: 1.8; }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">Sanctum of Spiritborn &middot; Native DAVAR / D3D12 engine</p>
+  <h1>Sanctum Tutorial Script</h1>
+  <p class="dek">Every line, object, and choice from title screen through the Academy, Eden, the flood, Babel, Ur, Mamre, Sinai, Jericho, Jerusalem, the Prophets, Babylon, Nippur, the Lion's Den branch, Kalhu, and Assur, transcribed from the shipped scene files &mdash; in the order the engine's own <code style="font-family:var(--font-mono)">next()</code> chain actually plays them.</p>
+
+  <div class="correction">
+    <span class="lbl">Replaces the earlier storyboard</span>
+    That version invented camera shots and at least one object that doesn't exist in the game (a compass held in the hand &mdash; the real Wake trial is a rhythm cue, "press SPACE on the beat"). Nothing below is invented. Every quoted line is copied verbatim from the <code style="font-family:var(--font-mono)">.davar</code> source; every object is the one the file actually places, with the file's own citation where it gives one.
+  </div>
+
+  <p class="sources">Source: <code>C:\Projects\Dave\Native\SanctumGPU\*.davar</code> (10 files, read in full) &middot; Bunyan correspondences checked against <i>The Pilgrim's Progress</i> (1678) &middot; Dev Manual: <code>WO_SanctumDevManual_Recovered_20260713\DevManual\DEV_HANDBOOK.md</code> (116 chapters)</p>
+
+  <nav class="toc">
+    <a href="#welcome">Welcome</a><a href="#build">Choose a Body</a><a href="#face">Shape the Face</a>
+    <a href="#wake">Wake</a><a href="#interp">Interpreter's House</a><a href="#hill">Hill of Cost</a>
+    <a href="#palace">Palace of Courage</a><a href="#grove">Calling Grove</a><a href="#academy">Academy of Faith</a><a href="#eden">Eden</a><a href="#noah">Noah</a><a href="#babel">Babel</a><a href="#ur">Ur</a><a href="#mamre">Mamre</a><a href="#sinai">Sinai</a><a href="#jericho">Jericho</a><a href="#jerusalem">Jerusalem</a><a href="#prophets">Prophets</a><a href="#babylon">Babylon</a><a href="#nippur">Nippur</a><a href="#lionsden">Lion's Den</a><a href="#kalhu">Kalhu</a><a href="#assur">Assur</a>
+  </nav>
+
+  <!-- WELCOME -->
+  <section class="scene" id="welcome">
+    <div class="scene-head">
+      <span class="filetag">sanctum_welcome.davar</span>
+      <h2>Covenant Under the Stars</h2>
+      <span class="subtitle">the title screen &mdash; not a Bunyan scene</span>
+    </div>
+    <div class="corresp">Not drawn from <i>Pilgrim's Progress</i>. The composition cites <b>Genesis 15:5</b> directly &mdash; Abram taken outside at night and told to number the stars &mdash; and the game's own art bible names the pairing "Covenant Contrast."</div>
+    <blockquote class="speak">"Before the road, a name."<footer>opening speak()</footer></blockquote>
+    <h3>Hint shown</h3>
+    <p style="font-family:var(--font-mono); font-size:0.88rem;">"WASD move &nbsp;-&nbsp; arrows look &nbsp;-&nbsp; SPACE to act &nbsp;-&nbsp; TAB for menu"</p>
+    <h3>What's actually in frame</h3>
+    <p style="font-size:0.92rem;">Night. A flat alluvial plain (the file measured this deliberately &mdash; hillier ground buried the horizon under the camera's foot, since <code style="font-family:var(--font-mono)">begin()</code> has no pitch at all). One covenant light &mdash; a 900-unit shaft, placed off-centre so it doesn't sit directly behind the centred BEGIN/CONTINUE/QUIT text &mdash; and three robed figures in silhouette gathered at its foot, ~700 units out, for scale. A Hebrew sigil (<i>pethach</i>, "to open") was tried on the shaft and removed: at every size tried it read as an unidentifiable pale blob, never as a mark. Flagged as Ryan's call to reverse, not settled.</p>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(shaft)</span>"You cross the threshold."</div></div>
+    <div class="close-line"><span class="lbl">close()</span>"The door is open. What you carry in is still yours to choose."</div>
+    <blockquote class="speak">"Sanctum of Spiritborn."<footer>closing speak()</footer></blockquote>
+    <h3>As shipped</h3>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(0, 300, 30, -400)</code> &mdash; no pitch; the engine has none, so composition here is done entirely by where things are placed, not by angle.</dd>
+      <dt>Next</dt><dd>sanctum_avatar_select.davar</dd>
+    </dl>
+    <h3>Open items, from the file itself</h3>
+    <ul class="devnotes">
+      <li><b>The "cinematic push-in" named in an earlier receipt isn't a shot that exists yet.</b> <code style="font-family:var(--font-mono)">begin()</code> is a single fixed eye position with no pitch and no path &mdash; a dolly toward the marker would need new engine capability (an eye that moves over time), not a framing choice.</li>
+      <li>A pool of light was tried at the beam's foot and removed: emissive geometry here doesn't illuminate anything else, and any horizontal element is seen edge-on from a pitch-less ground-level camera &mdash; it read as a landing strip, not a glow.</li>
+    </ul>
+  </section>
+
+  <!-- CHOOSE A BODY -->
+  <section class="scene" id="build">
+    <div class="scene-head">
+      <span class="filetag">sanctum_avatar_select.davar</span>
+      <h2>Choose a Body</h2>
+      <span class="subtitle">MakeHuman / MPFB macro build &mdash; not a Bunyan scene</span>
+    </div>
+    <blockquote class="speak">"A body, before the calling asks for one."<footer>opening speak()</footer></blockquote>
+    <h3>Four builds, four real macro-axis vectors</h3>
+    <table class="objects">
+      <tr><th>Build</th><th>near()</th><th>govern()</th></tr>
+      <tr><td class="obj">Slender</td><td>A lighter frame. Faster, less mass to carry.</td><td>You take the slender build.</td></tr>
+      <tr><td class="obj">Average</td><td>A middling frame. Nothing about it stands out, and that is the point of it.</td><td>You take the average build.</td></tr>
+      <tr><td class="obj">Broad</td><td>A heavier frame. More to carry, and more that can carry.</td><td>You take the broad build.</td></tr>
+      <tr><td class="obj">Elder</td><td>An older frame. It has been somewhere before this.</td><td>You take the elder build.</td></tr>
+    </table>
+    <p style="font-size:0.85rem; color:var(--ink-dim); margin-top:0.6rem;">Each drives the same six real MakeHuman macro axes (gender / age / muscle / weight / height / proportion) to a different honest corner of the build space &mdash; not four cosmetic labels on one body.</p>
+    <div class="close-line"><span class="lbl">close()</span>"The shape you chose is not the calling you will be given. Both are yours now."</div>
+    <blockquote class="speak">"The body is taken up."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(0, 130, 0, -110)</code> &mdash; body at z&minus;20, builds at z&minus;160: the player reads their own body first, the choices beyond it.</dd>
+      <dt>Next</dt><dd>sanctum_creator.davar</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>Named tension, not resolved here.</b> The file quotes both threshold scenes' own thesis &mdash; "not one of them asked what you look like" &mdash; and states plainly this scene exists on Ryan's direct instruction, not because that tension was settled.</li>
+    </ul>
+  </section>
+
+  <!-- SHAPE THE FACE -->
+  <section class="scene" id="face">
+    <div class="scene-head">
+      <span class="filetag">sanctum_creator.davar</span>
+      <h2>Shape the Face</h2>
+      <span class="subtitle">creator() mode on the chosen body &mdash; not a Bunyan scene</span>
+    </div>
+    <blockquote class="speak">"A face is not yet a person. The rest is still yours to choose."<footer>opening speak()</footer></blockquote>
+    <h3>What's composed on the body</h3>
+    <table class="objects">
+      <tr><th>Part</th><th>Note</th></tr>
+      <tr><td class="obj">Hair, beard</td><td>long hair + short beard, from native renders</td></tr>
+      <tr><td class="obj">Eyes, brow</td><td>seated by ring analysis against this body's own eye sockets</td></tr>
+      <tr><td class="obj">Robe</td><td>spiritborn_pilgrim_mantle_v7 &mdash; sandstone tunic, leather sash, midnight-blue mantle, gold edging, 53-joint garment weights matched to this skeleton</td></tr>
+    </table>
+    <div class="close-line" style="margin-top:0.8rem;"><span class="lbl">close()</span>"This is who you are. What you are called is still to come."</div>
+    <dl class="facts">
+      <dt>Lighting</dt><dd>studio &mdash; lit for a body, not a landscape</dd>
+      <dt>Next</dt><dd>sanctum_pilgrim_wake.davar</dd>
+    </dl>
+    <h3>The control surface, as actually built (sanctum_avatar.h)</h3>
+    <p style="font-size:0.92rem;">Not 18 sliders. Two authored things exist and disagree with each other: a <b>23-control registry</b> (3 domains, 12 slots, 9 material channels) written for a fuller creator, and the <b>base body mesh</b>, which only actually exposes <b>6 real macro axes</b> &mdash; gender, age, muscle, weight, height, proportion &mdash; built from 17 raw MakeHuman morph targets combined in the products of those six axes. The file's own words: "the two sides disagree in both directions." The registry asks for face detail (nose width, jaw width, ear projection) the base has no target for at all; the base's two strongest axes &mdash; gender and age &mdash; have no control in the registry. A coverage check (<code style="font-family:var(--font-mono)">sav_coverage()</code>) reports the mismatch rather than hiding it, so a control that can't move the mesh is never drawn as if it can.</p>
+    <ul class="devnotes">
+      <li><b>Skin noise was a GPU driver defect, not a texture bug.</b> A gradient-free skin sample stayed noisy unless it was the only statement in a ~500-line shader. Workaround: a texture-free skin material routed through the engine's existing subsurface-scattering skin model instead. Measured per-patch noise: ~15.4 &rarr; ~7.4.</li>
+      <li><b>Gender and age were silently undrivable for a while.</b> A default that suppressed ethnicity-specific morph targets (reasoned as keeping blends "inside the universal family") turned out to delete the only three targets in the file that carry any gender or age shape at all &mdash; their universal counterparts measure zero displacement. Fixed by deriving the suppression from how many distinct ethnicities the base actually ships, rather than defaulting it off.</li>
+    </ul>
+  </section>
+
+  <!-- WAKE -->
+  <section class="scene" id="wake">
+    <div class="scene-head">
+      <span class="filetag">sanctum_pilgrim_wake.davar</span>
+      <h2>Wake &mdash; Tutorial 1: Wake And Move</h2>
+      <span class="subtitle">trial: pilgrim &middot; level 2</span>
+    </div>
+    <div class="corresp">Christian in the City of Destruction, waking to the burden on his back before the road has a name. The govern() below <i>is</i> that burden &mdash; in Bunyan it is not optional, so the scene gives it exactly one choice, not a fork.</div>
+    <blockquote class="speak">"The tutorial begins in a quiet room before the road has a name. The first lesson is bodily control: stand, move, look, pick up, and open the way out."<footer>opening speak()</footer></blockquote>
+    <h3>teach() sequence</h3>
+    <ol class="teach">
+      <li>Use W, A, S and D to walk. <span class="key">W A S D</span></li>
+      <li>Use the arrow keys to look around. <span class="key">LEFT RIGHT</span></li>
+      <li>A lamp is burning. Walk to it. <span class="key">W</span></li>
+      <li>Press SPACE on the beat to steady yourself. <span class="key">SPACE</span></li>
+      <li>Your pack is on the floor. Press E to take it. <span class="key">E</span></li>
+      <li>Open the door and step out. <span class="key">E</span></li>
+    </ol>
+    <h3>Objects in the room</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">Bedside lamp</td><td class="cite">1 Sam 3:3, ner</td><td>real flame + point light; keys the room</td></tr>
+      <tr><td class="obj">Standing lamp</td><td class="cite">&mdash;</td><td>second light, keys the player's own figure</td></tr>
+      <tr><td class="obj">Travel pack</td><td class="cite">Gen 42:35 / 1 Sam 25:29</td><td>tsror &mdash; a cloth bundle, corners knotted, not a modern rucksack</td></tr>
+      <tr><td class="obj">Bedroll</td><td class="cite">Mark 2:9</td><td>"take up thy bed and walk" &mdash; left unrolled-end toward the room, as just-left</td></tr>
+      <tr><td class="obj">Door</td><td class="cite">&mdash;</td><td>a warm glow in the hall's real doorway &mdash; open question whether this should be a door leaf instead, flagged for Ryan</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(pack)</span>"You take up the pack. It is heavier than it looked, and it is yours."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">One govern, not a fork &mdash; "in Pilgrim's Progress the burden is not optional... choosing whether to be burdened would be a different book."</p>
+    <div class="close-line"><span class="lbl">close()</span>"Wake up, move to the lamp, look at the pack, pick it up, and open the door."</div>
+    <blockquote class="speak">"One step. Then another."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(0, 15, 0, -60, 85)</code></dd>
+      <dt>Trial</dt><dd>pilgrim = pulse.compass.beat &mdash; "find the beat," a rhythm cue, not an object</dd>
+      <dt>Next</dt><dd>sanctum_interpreter_house.davar</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>The player used to spawn 200 units in the air.</b> No scene in the first ten minutes authored a <code style="font-family:var(--font-mono)">begin()</code>; without one the engine composes a camera that can see every placed form, which for this room meant standing outside the building looking down. Every early screenshot was unknowingly photographing that bug.</li>
+      <li>Measured before the standing lamp existed: figure luminance 70.2 against a wall of 74.5, ratio 0.94 &mdash; the player's own character was fractionally darker than the walls behind him.</li>
+    </ul>
+  </section>
+
+  <!-- INTERPRETER'S HOUSE -->
+  <section class="scene" id="interp">
+    <div class="scene-head">
+      <span class="filetag">sanctum_interpreter_house.davar</span>
+      <h2>Interpreter's House &mdash; Tutorial 2: Read The Room</h2>
+      <span class="subtitle">trial: loresmith &middot; level 3</span>
+    </div>
+    <div class="corresp">The House of the Interpreter, where Christian is shown several symbolic rooms by candlelight and told to carry their lessons forward. This scene keeps the plural: three lessons stand here, and the govern() choice is which one you carry &mdash; not whether.</div>
+    <blockquote class="speak">"Wisdom is learned through symbols, rooms, stories, and practiced attention. The player learns to read the Codex before rushing the road."<footer>opening speak()</footer></blockquote>
+    <h3>teach() sequence</h3>
+    <ol class="teach">
+      <li>Use W, A, S and D to walk. <span class="key">W A S D</span></li>
+      <li>Use the arrow keys to look around. <span class="key">LEFT RIGHT</span></li>
+      <li>A lamp stands to your left. Walk to it. <span class="key">W</span></li>
+      <li>When a mark appears, press SPACE to seal it. <span class="key">SPACE</span></li>
+      <li>Three lessons stand here. Carry only one. <span class="key">E</span></li>
+    </ol>
+    <h3>Objects in the room</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Note</th></tr>
+      <tr><td class="obj">Prayer altar (lamp)</td><td>the room's light source, "signs shown by lamplight"</td></tr>
+      <tr><td class="obj">Standing lamp</td><td>keys the player's own figure</td></tr>
+      <tr><td class="obj">3 wall sconces</td><td>Near Eastern open oil lamps, tight pools of light, real darkness between them</td></tr>
+      <tr><td class="obj">Framed picture</td><td>"a picture on the wall becomes a warning, not a decoration"</td></tr>
+      <tr><td class="obj">Dusty parlor desk</td><td>the third lesson's location</td></tr>
+      <tr><td class="obj">3 scrolls + 2nd altar</td><td>room dressing &mdash; three objects had been standing in 220 units of empty hall</td></tr>
+    </table>
+    <h3>Three lessons &mdash; carry one</h3>
+    <div class="choices">
+      <div class="choice"><span class="obj">govern(lamp)</span>"You carry the lamp's lesson: look twice before acting once."</div>
+      <div class="choice"><span class="obj">govern(picture)</span>"You carry the picture's lesson: a warning is not a decoration."</div>
+      <div class="choice"><span class="obj">govern(parlor)</span>"You carry the parlor's lesson: small enough to hold, strong enough to turn the next step."</div>
+    </div>
+    <div class="close-line"><span class="lbl">close()</span>"Listen to the guide, inspect the symbols, and carry one clear lesson into the road."</div>
+    <blockquote class="speak">"One lesson, carried."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(0, 15, 0, -60, 85)</code></dd>
+      <dt>Trial</dt><dd>loresmith = pulse.rune.stamp &mdash; a mark appears, SPACE seals it</dd>
+      <dt>Lighting</dt><dd>night &mdash; the room is dark by design; the sconces and lamps are the only bright things in it</dd>
+      <dt>Next</dt><dd>sanctum_hill_of_cost.davar</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>Measured before the fix: figure luminance 41.7 against a wall of 49.8, ratio 0.84 &mdash; the worse of the two lit interiors. "Four sconces and two altars lit the room beautifully and none of them lit him, because they were all placed for the architecture."</li>
+      <li>The framed picture was invisible for four passes before anyone found why: it was placed 4 units inside the back wall's masonry and drew nothing. Every other explanation (too dark, too thin, light too far) was tried and wrong first.</li>
+    </ul>
+  </section>
+
+  <!-- HILL OF COST -->
+  <section class="scene" id="hill">
+    <div class="scene-head">
+      <span class="filetag">sanctum_hill_of_cost.davar</span>
+      <h2>Hill of Cost &mdash; Tutorial 3: Keep The Roll</h2>
+      <span class="subtitle">trial: zealwright &middot; level 4</span>
+    </div>
+    <div class="corresp">This is not a loose reference &mdash; it is Bunyan's Hill Difficulty episode directly: Christian rests in an arbor partway up the hill, falls asleep, and loses his roll (his certificate), then must go back for it. "Steep hill / rest arbor / lost roll" is that exact scene, renamed to Sanctum's own vocabulary.</div>
+    <blockquote class="speak">"The road has effort, rest, and consequence. The player learns that comfort is good when it restores obedience and dangerous when it makes memory careless."<footer>opening speak()</footer></blockquote>
+    <h3>teach() sequence</h3>
+    <ol class="teach">
+      <li>Climb toward the stepped hill. <span class="key">W A S D</span></li>
+      <li>Hold SPACE, then release when your strength passes 80%. <span class="key">SPACE</span></li>
+      <li>Choose the lost roll or the resting arbor with E. <span class="key">E</span></li>
+    </ol>
+    <h3>Objects on the hill</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Note</th></tr>
+      <tr><td class="obj">Steep hill</td><td>a stepped, ascending built form &mdash; the one shape in this engine that reads as "climb" on its own</td></tr>
+      <tr><td class="obj">Rest arbor</td><td>a real grown oak tree</td></tr>
+      <tr><td class="obj">Lost roll</td><td>a scroll prop, the one you go back for</td></tr>
+    </table>
+    <h3>The fork the opening line already named</h3>
+    <div class="choices">
+      <div class="choice"><span class="obj">govern(roll)</span>"You go back for the roll. Night is closer now, and you have it."</div>
+      <div class="choice"><span class="obj">govern(arbor)</span>"You take the rest, and the light goes while the roll lies where it fell."</div>
+    </div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">The roll is listed first on purpose: the automated regression walker always takes the first govern, so the standing smoke-test demonstrates the watchful path, not the careless one.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Climb the hill, rest without forgetting, and recover the roll before night."</div>
+    <blockquote class="speak">"The roll is kept."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(-34, 40, 0, -80, 100)</code></dd>
+      <dt>Trial</dt><dd>zealwright = pressure.hold.curve &mdash; hold SPACE, release above 80% strength</dd>
+      <dt>Lighting</dt><dd>dusk, low western sun</dd>
+      <dt>Next</dt><dd>sanctum_palace_courage.davar</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>This is the one outdoor tutorial beat; the indoor collision gap (below) doesn't directly apply here, but the same "only <code style="font-family:var(--font-mono)">build()</code> marks a form solid, not <code style="font-family:var(--font-mono)">hall()</code>" limitation governs whether any boundary on this hill can stop the player physically yet.</li>
+    </ul>
+  </section>
+
+  <!-- PALACE OF COURAGE -->
+  <section class="scene" id="palace">
+    <div class="scene-head">
+      <span class="filetag">sanctum_palace_courage.davar</span>
+      <h2>Palace of Courage &mdash; Tutorial 4: Join The Road</h2>
+      <span class="subtitle">trial: guardian &middot; level 5 (full difficulty)</span>
+    </div>
+    <div class="corresp">Bunyan's Palace Beautiful: pilgrims are examined by the watchful porter, armed from the house's armory, and sent on with companions rather than alone. "Watch gate / armory hall / dawn road" is that sequence &mdash; examined, equipped, sent onward &mdash; under Sanctum's own names.</div>
+    <blockquote class="speak">"The pilgrim is welcomed into a household, equipped for danger, and sent onward with witnesses rather than alone."<footer>opening speak()</footer></blockquote>
+    <h3>teach() sequence</h3>
+    <ol class="teach">
+      <li>Walk to the watch gate. <span class="key">W A S D</span></li>
+      <li>Press SPACE when the closing ring meets its marker. <span class="key">SPACE</span></li>
+      <li>Press E at the gate to answer who you are becoming. <span class="key">E</span></li>
+      <li>Follow the dawn road when the gate opens. <span class="key">W</span></li>
+    </ol>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Note</th></tr>
+      <tr><td class="obj">Watch gate</td><td>a real wicket-gate model &mdash; the beat literally named "watch gate" gets an actual gate</td></tr>
+      <tr><td class="obj">Armory hall</td><td>a forge-fitted, iron-toned side hall; deliberately kept modest so it doesn't compete with the gate</td></tr>
+      <tr><td class="obj">Dawn road</td><td>a real rutted road model with a roadside cairn</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(watch)</span>"You answer the watch, and give the name of what you are becoming."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Deliberately not a govern on the gear or the road: the armory's own line says gear "is given for service, not swagger" &mdash; given, not chosen &mdash; and the road is where you're sent, not something you pick.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Answer the watch, receive road gear, and step into the covenant history path."</div>
+    <blockquote class="speak">"The road is joined."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(0, 40, 0, -90, 100)</code></dd>
+      <dt>Trial</dt><dd>guardian = pulse.timing.ring &mdash; SPACE only when the closing ring meets its marker; the hardest of the four, full difficulty</dd>
+      <dt>Lighting</dt><dd>dawn</dd>
+      <dt>Next</dt><dd>sanctum_grove.davar &mdash; the calling threshold</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>The engine's real <code style="font-family:var(--font-mono)">armory()</code> verb (which reads the actual item database) was deliberately not used here &mdash; it fires a near() per item, and calling it would silently turn "visit three tutorial beats" into "visit three beats plus every weapon in the armory."</li>
+    </ul>
+  </section>
+
+  <!-- CALLING GROVE -->
+  <section class="scene" id="grove">
+    <div class="scene-head">
+      <span class="filetag">sanctum_grove.davar</span>
+      <h2>Calling Grove</h2>
+      <span class="subtitle">not a Bunyan scene &mdash; the game's own invention</span>
+    </div>
+    <blockquote class="speak">"Let the ground be given trees, and the height a house, and the field a living thing."<footer>opening speak()</footer></blockquote>
+    <h3>The zone</h3>
+    <p style="font-size:0.92rem;">Not a ring of pedestals &mdash; a full walked zone. A ziggurat ("the house on the height"), a temple/colonnade, three mixed groves (oak, pine, olive) plus a landmark tree and a bare dead tree, a lion (its behaviour driven by a real simulated connectome of 512 Drosophila neurons &mdash; idle/seek/flee are the fly's own states, repurposed as an animal AI), and at the threshold a Hebrew door-word (<i>pethach</i>) beside a relic bearing the divine name.</p>
+    <h3>Thirteen callings, scattered, not arranged</h3>
+    <p style="font-size:0.9rem; color:var(--ink-dim);">Each stands near a real landmark &mdash; a grove, the architecture, the threshold &mdash; because a calling names you alone and its near() disc must not overlap another's. Three keep the positions they were originally authored at (Adherent, Steward, Loresmith); the other ten were placed by a solver, close enough to a landmark to be legible, far enough apart that no two discs fire as one. Every summary below is <code style="font-family:var(--font-mono)">CallingsData.luau</code>'s own field, verbatim &mdash; not paraphrased.</p>
+    <table class="objects">
+      <tr><th>Calling</th><th>Hebrew</th><th>near() &mdash; summary</th><th>Anchor</th><th>Mechanic</th></tr>
+      <tr><td class="obj">Guardian</td><td class="cite">מָגֵן magen</td><td>Shields and protects; courage under trial.</td><td class="cite">Psalm 18:2</td><td>Pulse Rhythm &mdash; pulse.timing.ring</td></tr>
+      <tr><td class="obj">Adherent&nbsp;<span style="color:var(--ink-dim); font-weight:400;">*</span></td><td class="cite">דָּבֵק davek</td><td>Binds the community; faithfulness and covenant keeping.</td><td class="cite">John 17:21</td><td>Path Weaving &mdash; path.weave.lattice</td></tr>
+      <tr><td class="obj">Windborne</td><td class="cite">רוּחַ ruach</td><td>Movement, agility, carried by Spirit; swift aid.</td><td class="cite">John 3:8</td><td>Path Slipstream &mdash; path.ribbon.trace</td></tr>
+      <tr><td class="obj">Zealwright</td><td class="cite">קִנְאָה qin'ah</td><td>Fervor for righteousness; crafts zeal into action.</td><td class="cite">Isaiah 48:10</td><td>Pressure Hold &mdash; pressure.hold.curve</td></tr>
+      <tr><td class="obj">Steward&nbsp;<span style="color:var(--ink-dim); font-weight:400;">*</span></td><td class="cite">פַּקִּיד paqid</td><td>Tends resources and growth; faithful with little and much.</td><td class="cite">James 5:7</td><td>Pressure Growth &mdash; pulse.growth.spiral</td></tr>
+      <tr><td class="obj">Artisan</td><td class="cite">חָרָשׁ charash</td><td>Beauty and precision; carves excellence into the world.</td><td class="cite">Ephesians 2:10</td><td>Path Inlay &mdash; path.drag.braid</td></tr>
+      <tr><td class="obj">Psalmist</td><td class="cite">מִזְמוֹר mizmor</td><td>Voice and rhythm; prayer and worship in song.</td><td class="cite">Psalm 33:2</td><td>Pulse Rhythm &mdash; pulse.sequence.glyphwheel</td></tr>
+      <tr><td class="obj">Witness</td><td class="cite">עֵד ed</td><td>Testifies; carries light into darkness.</td><td class="cite">John 8:32</td><td>Pulse Echo &mdash; pulse.echo.cone</td></tr>
+      <tr><td class="obj">Hearthkeeper</td><td class="cite">בַּעַל הַבַּיִת ba'al habayit</td><td>Hospitality and care; kindles rest and warmth.</td><td class="cite">Luke 10:27</td><td>Pressure Cook &mdash; pulse.cook.triad</td></tr>
+      <tr><td class="obj">Almoner</td><td class="cite">דַּיָּן dayyan</td><td>Redistributes wealth; scales with generosity.</td><td class="cite">Proverbs 29:7</td><td>Pulse Balance &mdash; pulse.balance.scale</td></tr>
+      <tr><td class="obj">Pilgrim</td><td class="cite">גֵּר ger</td><td>Journeys toward promise; guides others on the way.</td><td class="cite">John 8:12</td><td>Pulse Compass &mdash; pulse.compass.beat</td></tr>
+      <tr><td class="obj">Sentinel</td><td class="cite">צֹפֶה tsopheh</td><td>Vigilance and watchfulness; detects threats, stands guard.</td><td class="cite">Proverbs 15:3</td><td>Pulse Watchlight &mdash; pulse.watchlight</td></tr>
+      <tr><td class="obj">Loresmith&nbsp;<span style="color:var(--ink-dim); font-weight:400;">*</span></td><td class="cite">סוֹפֵר sofer</td><td>Keeps and crafts wisdom; teaches with gentleness.</td><td class="cite">Proverbs 3:13</td><td>Pulse Rune &mdash; pulse.rune.stamp</td></tr>
+    </table>
+    <p style="font-size:0.78rem; color:var(--ink-dim); margin-top:0.4rem;">* kept its original authored position; the other ten were placed by a solver.</p>
+    <div class="close-line" style="margin-top:0.8rem;"><span class="lbl">close()</span>"Thirteen callings named you and you carried one. Not one of them asked what you look like."</div>
+    <blockquote class="speak">"The zone is inhabited."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Camera</dt><dd><code>begin(0, 60, 0, -140)</code> &mdash; stands at the threshold looking in; deliberately not a shot of everything, since a grove is walked, not viewed</dd>
+      <dt>Next</dt><dd>sanctum_academy.davar</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>Flagged in the file itself: the closing line is "the thesis of the whole world" and is the one line here still without a cited source &mdash; "it is his to write."</li>
+      <li><b>Two of the thirteen Hebrew titles were caught wrong by a whole-text search, not by ear.</b> Almoner's title had been <i>'almon</i> (H489, "bereavement / widowhood") &mdash; an English sound-alike of "almon-er," not a translation &mdash; replaced with <i>dayyan</i> ("judge/advocate"), the person-noun standing in the calling's own anchor verse. Psalmist's title, <i>me-zomer</i>, doesn't exist anywhere in the Hebrew Bible (checked against both the Westminster Leningrad and Aleppo codices, zero hits); its consonants collide with an unrelated root meaning "pruning-hook." The root reasoning was right, the specific word was never attested. Corrected to <i>mizmor</i>, attested 57 times, all in Psalm superscriptions &mdash; the word actually in Psalm 33:2, this calling's own anchor. A repeatable gate (<code style="font-family:var(--font-mono)">verify_calling_hebrew.py</code>) now checks all 13 titles against both codices; this was the only one of 13 that failed on first run.</li>
+      <li>Nine of the thirteen scripture anchors moved on 2026-08-06 when Ryan ruled "the manual wins" over this file's older set &mdash; and CallingsData.luau's own header names the risk directly: the ruling had only been applied in sanctum_grove.davar, so this file would have silently reverted it the next time anything read from here instead of there.</li>
+    </ul>
+  </section>
+
+  <!-- ACADEMY -->
+  <section class="scene" id="academy">
+    <div class="scene-head">
+      <span class="filetag">sanctum_academy.davar</span>
+      <h2>Academy of Faith</h2>
+      <span class="subtitle">trial: witness &middot; level 4 &mdash; the tutorial's proven edge</span>
+    </div>
+    <blockquote class="speak">"Welcome to the Sanctum of Spiritborn! This sacred academy is your gateway to biblical worlds and spiritual warfare training."<footer>opening speak()</footer></blockquote>
+    <h3>The campus</h3>
+    <p style="font-size:0.92rem;">Six buildings around a central ascending temple: Scripture Hall, Prayer Chapel, Skill Forge, Questorium, the World Gateway, and the Archives. Verified against both real sources directly: <code style="font-family:var(--font-mono)">TutorialData.luau</code>'s own onboarding text says "the five main buildings: Scripture Hall, Prayer Chapel, Skill Forge, Questorium, and World Gateway" &mdash; that sentence is real, word for word, and it really does only name five. <code style="font-family:var(--font-mono)">AcademyZones.luau</code>'s actual building array builds six, Archives included, at the exact positions this scene scales &times;3 (Scripture Hall (&minus;70,0,0), Prayer Chapel (70,0,0), Skill Forge (0,0,&minus;70), Questorium (0,0,70), World Gateway (&minus;90,0,30), Archives (90,0,30)). The scene follows the array, not the prose. The temple at the centre is explicitly Ezekiel/Revelation-inspired, golden doors, deliberately built taller than every other building on campus because the manual's own word for it is "ascending."</p>
+    <h3>A fuller tutorial already exists on paper, unwired</h3>
+    <p style="font-size:0.92rem;">The native scene wires almost none of it &mdash; but <code style="font-family:var(--font-mono)">TutorialData.luau</code> specifies a real ten-step onboarding curriculum past just arriving: named staff (Dean of Scripture, Combat Master, Quest Master, Portal Warden, Chief Librarian), five spiritual-gift categories, five prayer types with real example prayers, and a four-world difficulty ladder (Eden &rarr; Egypt &rarr; Wilderness &rarr; Promised Land). None of that is in <code style="font-family:var(--font-mono)">sanctum_academy.davar</code> yet; the shipped scene is <code style="font-family:var(--font-mono)">npcs()</code> plus one govern() on the archive.</p>
+    <table class="objects">
+      <tr><th>Object</th><th>Note</th></tr>
+      <tr><td class="obj">Prayer Altar</td><td>Matthew 6:6</td></tr>
+      <tr><td class="obj">Ancient Scroll Collection</td><td>&mdash;</td></tr>
+      <tr><td class="obj">Training Dummy</td><td>&mdash;</td></tr>
+      <tr><td class="obj">TutorialGuide</td><td>an NPC standing beside the arrival point, the game's first quest target</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(archive)</span>"You take what you were taught out of the archive, and the rest stays on the shelf."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">The Academy teaches; what you choose to carry out of it is the only part you keep &mdash; the Archives are named for exactly that in the Dev Manual ("remembrance and reflection").</p>
+    <div class="close-line"><span class="lbl">close()</span>"Proverbs 1:5 &mdash; A wise man will hear, and will increase learning; and a man of understanding shall attain unto wise counsels."</div>
+    <blockquote class="speak">"The Academy of Faith stands."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>witness = pulse.echo.cone &mdash; say back accurately what you were told; the same skill the prophets' zone asks later, at higher stakes</dd>
+      <dt>Next</dt><dd>sanctum_eden.davar &mdash; past this point is the open game, not the tutorial</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>This zone was the last of 21 tutorial-chain scenes to ask the player anything. It looked wired because it calls <code style="font-family:var(--font-mono)">governline()</code> &mdash; but that only reads a calling's line for display; it is not <code style="font-family:var(--font-mono)">govern()</code>, the engine's actual decision verb. A prefix match had been read as a decision for as long as nobody counted the open parens.</li>
+      <li><b>The academy dwellers are real named Reformation-era figures, not placeholders</b> &mdash; Martin Luther, John Calvin, Zwingli, Tyndale, Erasmus, Ignatius of Loyola, Francis Xavier, and more, each with their own <code style="font-family:var(--font-mono)">dialogues</code> block in <code style="font-family:var(--font-mono)">ComprehensiveNPCs.luau</code>. Counted directly rather than trusting the scene comment's figure: <b>100</b> records list "academy" as a spawn location, not the 95 the .davar file's own comment claims &mdash; a small discrepancy between the comment and the data, left as measured rather than reconciled.</li>
+    </ul>
+  </section>
+
+  <!-- EDEN -->
+  <section class="scene" id="eden">
+    <div class="scene-head">
+      <span class="filetag">sanctum_eden.davar</span>
+      <h2>Eden</h2>
+      <span class="subtitle">the first world past the tutorial &mdash; Genesis 2, not Bunyan</span>
+    </div>
+    <div class="corresp">Not part of the Pilgrim's Progress sequence &mdash; Bunyan's own story starts after Eden, in a fallen world. This is simply where <code style="font-family:var(--font-mono)">next()</code> actually goes after the Academy. Its own close() hands off "Genesis 3 &rarr; Genesis 6" in one line &mdash; the Fall happens off-screen, between this scene and the next.</div>
+    <blockquote class="speak">"Let the garden be read out of the record."<footer>opening speak()</footer></blockquote>
+    <h3>What's read from the record vs. authored here</h3>
+    <p style="font-size:0.92rem;">Every other zone in this lane names its own trees and landmarks by hand. This one doesn't: <code style="font-family:var(--font-mono)">world("eden")</code> pulls Eden's real biome, flora, and landmark names live from the game's own 15-world source record. The file is explicit about where that stops: the record gives <i>names</i> ("Tree of Life Grove"), never positions, so the layout &mdash; where each named thing actually stands &mdash; is authored in this scene, not pretended to come from the record too. Likewise <code style="font-family:var(--font-mono)">species()</code> is a mapping choice, not a translation: the engine only grows four tree rules (oak, pine, olive, dead) against 37 distinct flora terms across all 15 worlds, falling back to oak for anything it can't match.</p>
+    <h3>Who's here</h3>
+    <table class="objects">
+      <tr><th>Figure</th><th>Placement note</th></tr>
+      <tr><td class="obj">Adam, Eve</td><td>named bare, no world prefix &mdash; unlike every other figure here</td></tr>
+      <tr><td class="obj">Garden-keeper</td><td>world-prefixed under eden</td></tr>
+      <tr><td class="obj">Guardian cherub</td><td>placed far out (z&minus;390), well past the tended ground</td></tr>
+      <tr><td class="obj">The serpent, disguised</td><td>placed deliberately far from the tended ground, near the treeline &mdash; present, and apart</td></tr>
+    </table>
+    <h3>What grows and flows here</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Note</th></tr>
+      <tr><td class="obj">Tree of Life</td><td>a single named tree, standing alone &mdash; "a landmark is not a wood"</td></tr>
+      <tr><td class="obj">Tree of Knowledge</td><td>likewise alone, the largest tree placed in the scene</td></tr>
+      <tr><td class="obj">Four Rivers Source</td><td>rendered as a spring-fed pool &mdash; the engine has no river primitive, so this is the water it does have</td></tr>
+      <tr><td class="obj">3 mixed groves</td><td>the record's unnamed "fruit-bearing trees," grown rather than placed one by one</td></tr>
+      <tr><td class="obj">Eridu</td><td>the real oldest city in the Mesopotamian record, read from a 238-city atlas and placed as archaeology beside the garden &mdash; not as a claim that they're the same place</td></tr>
+    </table>
+    <h3>The quest, and why this one</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(meadow)</span>"You go out to the meadow to gather, and nothing here has to be tilled yet."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Quest: "Steward of the Garden" &mdash; gather &times;5, chosen deliberately over the arc's other option, "Taste Not" (a kind-choices quest), because gathering is one of the three objective types this engine can actually judge and a theology quest isn't. It also matches Ryan's own stated order for this arc: "first quest is gathering, explicitly not tilling" &mdash; pre-Fall labor without the Fall's curse of toil.</p>
+    <div class="close-line"><span class="lbl">close()</span>worldbiome() &mdash; pulled live from the world record, not a fixed line; not reproduced here since it isn't authored in this file</div>
+    <blockquote class="speak">"The garden stands as it is written."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Lighting</dt><dd>"Perfect Paradise" &mdash; bright warm bounce, mid-morning sun still climbing, clean unfallen air (low turbidity)</dd>
+      <dt>Trial</dt><dd>steward = pulse.growth.spiral, level 3</dd>
+      <dt>Also present</dt><dd>a chronicle marker and a persons marker, both drawn from a 32,731-event dated chronology database (76 books, 868 people) the engine could not read before this scene</dd>
+      <dt>Next</dt><dd>sanctum_noah.davar &mdash; "the garden closes behind the Fall; the flood is what the record says next" (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>Five historical figures were authored for "eden" in the game's own NPC data and have never been wired into any scene &mdash; the same open gap the Academy has, at a smaller scale (below).</li>
+    </ul>
+  </section>
+
+  <!-- NOAH -->
+  <section class="scene" id="noah">
+    <div class="scene-head">
+      <span class="filetag">sanctum_noah.davar</span>
+      <h2>Noah</h2>
+      <span class="subtitle">Genesis 6&ndash;9 &mdash; not part of the tutorial or Bunyan's sequence</span>
+    </div>
+    <blockquote class="speak">"The ark rests on Ararat. The waters recede."<footer>opening speak()</footer></blockquote>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Note</th></tr>
+      <tr><td class="obj">The ark</td><td>built with <code style="font-family:var(--font-mono)">build("city")</code> &mdash; the engine has no ark-specific generator, so the city form stands in for it</td></tr>
+      <tr><td class="obj">The flood</td><td>a single 300-radius lake, standing for the whole flood rather than a river or sea</td></tr>
+      <tr><td class="obj">The dove</td><td class="cite">יוֹנָה Yonah</td></tr>
+      <tr><td class="obj">The rainbow</td><td class="cite">קֶשֶׁת Qeshet</td></tr>
+    </table>
+    <h3>Who's here</h3>
+    <p style="font-size:0.9rem; color:var(--ink-dim);">Four of "the eight who came through the water," world-prefixed under <code style="font-family:var(--font-mono)">noah_ark</code>: Noah, Noah's wife, Shem, and the animal keeper &mdash; placed by the ark's ramp, because the quest below is his job.</p>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(ark)</span>"You go up into the ark, and the door is shut behind you."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Quest: "Every Kind of Animal" &mdash; gather &times;6, chosen over "Build the Ark" (a craft quest) and two survive-days quests, none of which this engine implements. Gathering also matches what the scene already shows: the ark has landed, the dove is out, the animals are already aboard.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Genesis 9:16 &mdash; I will see it and remember the everlasting covenant between God and every living creature."</div>
+    <blockquote class="speak">"The waters cover the earth, and the ark floats above them."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>sentinel = pulse.watchlight, level 3 &mdash; "Noah's whole year is watching: the window, the raven, the dove, the olive leaf, waiting for a light that says the water has gone down."</dd>
+      <dt>Also present</dt><dd>a chronicle marker and a persons marker at "Ararat," drawn from the same 32,731-event dated chronology database as Eden</dd>
+      <dt>Next</dt><dd>sanctum_babel.davar (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>This scene was the first hard stop in the whole player path.</b> An old line tried to place() the flood water as if it were a placeable form; <code style="font-family:var(--font-mono)">lake()</code> actually carves its basin at its own coordinates and returns a count, not a form. The mismatched call errored on every single run, which aborted every binding after it, which meant close() could never fire &mdash; so the chain simply stopped here, four scenes past the calling grove, for as long as it took someone to walk welcome-through-Noah end to end and watch exactly where the flow died.</li>
+      <li><b>The road to here was edited twice to stop skipping scripture.</b> next() first ran straight from Noah to Mamre (Genesis 9 &rarr; 18), missing Abram's birth and calling. A scene for Ur was inserted to cover that (Genesis 11:31) &mdash; then Babel was inserted again, ahead of Ur, because the direct Noah&rarr;Ur hop still skipped Genesis 10&ndash;11:9, where the nations divide and the tower goes up: "a player who has not stood on the plain of Shinar does not feel Ur."</li>
+      <li>Seven figures were authored for "noah_ark" in the game's NPC data, and a direct count confirms exactly seven &mdash; unlike the Academy's mismatched figure, this one checks out precisely.</li>
+      <li>A separate, much deeper layer exists for this chapter that the native engine never reads: the Roblox quest-density lane's Chapter 52 pass added 141 quests and 705 activities to "Noah Ark / Mount Ararat," with the dove and rainbow tied to specific fenced days of a 370-day flood timeline (day 604976 onward). None of that density reaches this scene, which tells the same story in one room with one choice.</li>
+    </ul>
+  </section>
+
+  <!-- BABEL -->
+  <section class="scene" id="babel">
+    <div class="scene-head">
+      <span class="filetag">sanctum_babel.davar</span>
+      <h2>Babel</h2>
+      <span class="subtitle">Genesis 11:1&ndash;9 &mdash; not part of the tutorial or Bunyan's sequence</span>
+    </div>
+    <div class="corresp">Inserted to fix a real gap: the chain used to run Noah straight to Ur (Genesis 9 &rarr; 11:31), skipping the reason Abram is ever called out of anywhere. The two hinge verses sit one page apart and the file is explicit about not over-reading them: Genesis 11:4, "let us make us a <i>name</i>, lest we be scattered," against Genesis 12:2, "I will make thy <i>name</i> great." Babel builds a name to avoid scattering; Abram is given one and sent out not knowing where. The file deliberately does not argue the Hebrew wordplay on "shem" (also Noah's son Shem's name) &mdash; a lesson kept from the Almoner/Psalmist correction: the English carries the point without help.</div>
+    <blockquote class="speak">"One language, and one speech. They have found a plain in Shinar, and they have stopped."<footer>opening speak()</footer></blockquote>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">The tower</td><td class="cite">Genesis 11:4</td><td>a ziggurat, near() carries the verse in full</td></tr>
+      <tr><td class="obj">The burnt brick</td><td class="cite">Genesis 11:3</td><td>brick instead of stone, bitumen instead of mortar &mdash; the plain has no stone, which is why the tower is possible at all</td></tr>
+      <tr><td class="obj">The next course of brick</td><td class="cite">Genesis 11:6</td><td>the govern() object</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(course)</span>"They hand you a brick, and the reason they give is that no one should ever be scattered again."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">No fight, no timing ring &mdash; the fourth zone in this game to refuse a skill check on the same grounds every time: turning the passage into something earned would say the opposite of the text. The builders aren't played as stupid or wicked either; Genesis 11:6 has God confirm the project would actually have worked. A Babel built from cartoon arrogance would cost the player the real decision.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Genesis 11:9 &mdash; Therefore is the name of it called Babel; because the LORD did there confound the language of all the earth: and from thence did the LORD scatter them abroad upon the face of all the earth."</div>
+    <blockquote class="speak">"They left off to build the city. The next man on this road will be given a name instead of making one."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>none &mdash; deliberate, see above</dd>
+      <dt>Date</dt><dd>&minus;2242, attributed to Ussher's chronology explicitly, not asserted as settled</dd>
+      <dt>Next</dt><dd>sanctum_ur.davar</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>A naming bug got caught by playing the game, then became a permanent lint rule.</b> The city is keyed in the atlas by its Akkadian name, "Bābili," not "Babylon" &mdash; shipping "Babylon" is a scene error that aborts every statement after it, including close(), so the zone would load and never hand off. This exact mistake had already happened once before in a different scene. The second occurrence became <code style="font-family:var(--font-mono)">davar_lint</code> checking every <code style="font-family:var(--font-mono)">city()</code> call against the atlas, rather than a comment nobody would read a third time.</li>
+      <li>Deliberately no <code style="font-family:var(--font-mono)">cityskills()</code> here. Babylon's excavated crafts are real, but they're Old Babylonian and later &mdash; roughly 1,500 years after this scene. Showing them would dress the tower in trades from a city that doesn't exist yet, and the anachronism would be invisible, because the numbers themselves are genuine. That record belongs to a later scene instead.</li>
+    </ul>
+  </section>
+
+  <!-- UR -->
+  <section class="scene" id="ur">
+    <div class="scene-head">
+      <span class="filetag">sanctum_ur.davar</span>
+      <h2>Ur of the Chaldees</h2>
+      <span class="subtitle">Genesis 11:26&ndash;12:1 &mdash; not part of the tutorial or Bunyan's sequence</span>
+    </div>
+    <div class="corresp">Fixes a second gap: the chain used to run Noah straight to Mamre with no Ur at all. The chronology carries two of Abraham's own dates on this ground (&minus;2166 born, &minus;2091 called), and Genesis 11:31 names the road out by its own itinerary &mdash; Ur to Haran &mdash; which is exactly where Mamre already opens. Ur &rarr; Mamre isn't an invented route; it's the verse's.</div>
+    <blockquote class="speak">"Ur of the Chaldees. A great city, and a road out of it."<footer>opening speak()</footer></blockquote>
+    <h3>What was already sitting here, unused</h3>
+    <p style="font-size:0.92rem;">Ur's atlas entry already carried ten research dimensions, seven crafts attested in its own excavated tablets, thirty-three named lords from the real CDLI cuneiform corpus (Urnamma and Shulgi among them &mdash; the actual kings who built this city's ziggurat), and its own dated record. Twenty of twenty-two craft-bearing cities were still unused when this scene was written. Nothing here needed inventing.</p>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">Canal + date palms</td><td class="cite">&mdash;</td><td>without declared water, an alluvial biome renders as accurate bare salt-crusted desert &mdash; correct physics, wrong city; palm spacing (~100/ha) is a real attested figure, the exact canal course is not</td></tr>
+      <tr><td class="obj">The shrine</td><td class="cite">&mdash;</td><td>a mudbrick platform with a buttressed brick sanctuary &mdash; replacing an earlier Greek peripteral temple that was architecturally about a thousand years and a whole civilization out of place</td></tr>
+      <tr><td class="obj">The road out</td><td class="cite">Genesis 12:1</td><td>a generic worn caravan track along the real Ur&ndash;Haran Euphrates corridor, with wheel ruts and a plain stone cairn &mdash; deliberately not an inscribed boundary stone, a later genre that would misdate the object</td></tr>
+      <tr><td class="obj">"Terah's house"</td><td class="cite">Genesis 11:31</td><td>explicitly not Woolley's famous tourist "House of Abraham" reconstruction &mdash; no likeness of Abraham's family is or could be attested, so it's built as a typical Ur III courtyard house of the era instead</td></tr>
+    </table>
+    <h3>Who's here</h3>
+    <p style="font-size:0.9rem; color:var(--ink-dim);">Abraham (named bare), Sarah, Lot, and a caravan leader (world-prefixed) &mdash; the household that left, not the city's own cast. All were previously hash-blob relics standing in for named people; swapped to the same real clothed-character pipeline used everywhere else in this lane, as generic bodies in plain dress, not portraits &mdash; no likeness of these figures exists or could exist.</p>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(road)</span>"You go out, not knowing where you are going."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">A decision, not a trial and not a fight: Hebrews 11:8 names the whole mechanic &mdash; "he went out, not knowing whither he went." A skill check here would assert a competence the text explicitly denies him.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Genesis 15:7 &mdash; I am the LORD that brought thee out of Ur of the Chaldees, to give thee this land to inherit it."</div>
+    <blockquote class="speak">"He went out, not knowing where he was going."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>none &mdash; deliberate, see above</dd>
+      <dt>Camera</dt><dd><code>begin(-180, 340, 0, -70)</code> &mdash; standing outside the city looking back at the ziggurat: "a city you are about to be called out of should be seen whole, not from inside its streets"</dd>
+      <dt>Also present</dt><dd>7 real attested crafts from Ur's own tablets; a chronicle and persons record narrowed to Abraham's own dates (&minus;2200 to &minus;2000), not Ur's full three millennia; 3 of Ur's real lords shown, not all 33 &mdash; "a departure is not a durbar"</dd>
+      <dt>Next</dt><dd>sanctum_mamre.davar (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>Inserting a zone into an existing chain is a three-file edit, not two</b> &mdash; caught here and named as a pattern after happening twice: the predecessor's <code style="font-family:var(--font-mono)">next()</code>, the new zone itself, and the downstream zone's <code style="font-family:var(--font-mono)">follows()</code> declaration all have to move together, or an automated index reports phantom conflicts between two zones both claiming the same predecessor.</li>
+    </ul>
+  </section>
+
+  <!-- MAMRE -->
+  <section class="scene" id="mamre">
+    <div class="scene-head">
+      <span class="filetag">sanctum_mamre.davar</span>
+      <h2>Hospitality at Mamre</h2>
+      <span class="subtitle">Genesis 18 &mdash; one of 3,142 authored quests, and one of the few this engine can actually judge</span>
+    </div>
+    <div class="corresp">The first scene in this document framed explicitly as a written quest being played, not a hand-authored scene. The distinction matters and the file states its own limit plainly.</div>
+    <h3>What this scene admits about the whole quest system</h3>
+    <p style="font-size:0.92rem;">The game's quest data holds <b>547 arcs and 3,142 quests</b>. This engine's own zone-closing loop &mdash; a scene closes once every near() has fired &mdash; already happens to match three of that data's objective types: <code style="font-family:var(--font-mono)">meet_npcs</code> (386 quests), <code style="font-family:var(--font-mono)">visit_zones</code> (110), and <code style="font-family:var(--font-mono)">gather</code> (32). This scene runs one of those 386 for real. The other roughly 2,600 quests ask for <code style="font-family:var(--font-mono)">theology</code>, <code style="font-family:var(--font-mono)">worship</code>, <code style="font-family:var(--font-mono)">scripture_memory</code>, <code style="font-family:var(--font-mono)">survive_days</code> &mdash; mechanics this engine doesn't have. <code style="font-family:var(--font-mono)">objective()</code> reports those as <b>UNJUDGED</b> rather than silently passing them: "a quest system that reports success for a mechanic it never implemented is worse than one that admits the gap."</p>
+    <blockquote class="speak">"Let one of the written quests be walked."<footer>opening speak()</footer></blockquote>
+    <h3>A genuine translation call, not a default</h3>
+    <p style="font-size:0.92rem;">Genesis 13:18 / 18:1's Hebrew, <i>'elonei mamre</i>, is rendered "oaks" in some translations and "terebinths" in others &mdash; a real, old ambiguity. The scene grows <b>terebinth</b>, not oak: botanically, both candidate species (<i>Quercus calliprinos</i> and <i>Pistacia palaestina</i>) actually co-dominate this exact Judean maquis, and terebinth's broad-low-dome habit fits a goat-browsed pastoral hillside better than a temperate oak's round canopy. Scaled down deliberately too &mdash; the real tree reaches 5&ndash;18 m but is "often only 1&ndash;3 m where heavily browsed by goats," which is Abraham's actual landscape.</p>
+    <h3>Who's here</h3>
+    <table class="objects">
+      <tr><th>Figure</th><th>near()</th></tr>
+      <tr><td class="obj">Abraham</td><td>bare id</td></tr>
+      <tr><td class="obj">Sarah</td><td>world-prefixed: abraham_journey_sarah</td></tr>
+      <tr><td class="obj">Isaac</td><td>bare id</td></tr>
+      <tr><td class="obj">Lot</td><td>world-prefixed: abraham_journey_lot</td></tr>
+    </table>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">The same inconsistent namespacing this lane keeps finding, this time caught by a lookup that fails loudly on purpose: a missing soul's id is named in the error rather than returned as a silent blank &mdash; a silent blank would have placed an unnamed figure and looked like nothing was wrong.</p>
+    <h3>The one choice, and a real engine rule it ran into</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(abraham)</span>"You run from the tent door to meet them, and the meal is made ready for three strangers."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">First attempt bound this to the tent itself, and the engine refused outright: "govern() needs a near() on 'city' first." That's a real, deliberate constraint, not a bug &mdash; you can't be asked to decide about a thing the zone never let you get close enough to hear. The tent and the trees are scenery with no near() here; only the four named people speak, so the choice binds to Abraham, who is the one who "ran to meet them from the tent door" (Genesis 18:2).</p>
+    <div class="close-line"><span class="lbl">close()</span>questscripture() &mdash; the quest's own closing verse, pulled live from its data, not fixed in this file</div>
+    <blockquote class="speak">"The quest stands as it is written."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Quest</dt><dd>"Hospitality at Mamre," meet_npcs &times;4, 110 xp, Genesis arc</dd>
+      <dt>Trial</dt><dd>hearthkeeper = pulse.cook.triad, level 4 &mdash; Genesis 18 is literally a meal (Sarah bakes, Abraham dresses a calf, three guests eat); "the mechanic and the chapter are the same act"</dd>
+      <dt>City cited</dt><dd>Harran &mdash; Abraham comes out of Harran per Genesis 12:4; the zone is Mamre, the road behind it is Harran's</dd>
+      <dt>Next</dt><dd>sanctum_sinai.davar &mdash; "the promise made at Mamre is given its law at the mountain" (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>A wrong-era chronicle lookup was caught before it shipped, not after.</b> The first attempt pulled dated-record data for "Hebron" and found nothing usable for the patriarchal era &mdash; Hebron's own entries in the chronology are Joshua-era and David-era, centuries later. Showing Joshua's conquest inside Abraham's tent scene is exactly the anachronism the estate's own doctrine forbids. Corrected to "Mamre" as its own place, whose two chronicled events are precisely this scene: Abraham settling, and the three visitors of Genesis 18.</li>
+      <li>Seven figures were authored for "abraham_journey" and never wired &mdash; verified by direct count, exactly seven, same clean result as Noah.</li>
+    </ul>
+  </section>
+
+  <!-- SINAI -->
+  <section class="scene" id="sinai">
+    <div class="scene-head">
+      <span class="filetag">sanctum_sinai.davar</span>
+      <h2>Mount Sinai</h2>
+      <span class="subtitle">Exodus 19&ndash;20 &mdash; the scene that first proved two people can meet in this game</span>
+    </div>
+    <div class="corresp">Before this scene existed, 35 of the 36 zone scenes in the whole game carried near() markers and nothing else &mdash; zero soul() calls and one quest() call, against a catalogue of 856 NPCs and 3,137 quests. There were things to walk past and no one to meet. This is the scene that changed that.</div>
+    <blockquote class="speak">"Mount Sinai. The mountain of the covenant."<footer>opening speak()</footer></blockquote>
+    <h3>Two quest datasets disagreed, and the failure named itself</h3>
+    <p style="font-size:0.92rem;">Two real, separate quest files exist for this exact mountain and they don't agree. The Roblox lane's <code style="font-family:var(--font-mono)">QuestData.luau</code> holds "Law from Sinai," world <code style="font-family:var(--font-mono)">wilderness_wandering</code>, 800 xp. The engine's own <code style="font-family:var(--font-mono)">arc()</code>/<code style="font-family:var(--font-mono)">quest()</code> verbs read a different file entirely (547 arcs, 3,137 quests), where this zone's quest is "Ascent of Sinai," arc <code style="font-family:var(--font-mono)">exodus</code>, 160 xp. Authoring from the first file failed outright: <code style="font-family:var(--font-mono)">no arc "wilderness_wandering" in his data</code>. The refusal was the useful part &mdash; it named exactly what it couldn't find, so the wrong source was obvious in one run instead of shipping a quest that would silently never complete.</p>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Even the right quest has a real gap: its objective type is "theology" &times;4, one of the types this engine doesn't implement, so <code style="font-family:var(--font-mono)">objective()</code> reports it UNJUDGED rather than faking a pass. The zone still completes on something real &mdash; the govern() decision and the trial below are both judged.</p>
+    <h3>Who's here</h3>
+    <table class="objects">
+      <tr><th>Figure</th><th>Note</th></tr>
+      <tr><td class="obj">Moses</td><td>bare id</td></tr>
+      <tr><td class="obj">Joshua</td><td>bare id</td></tr>
+      <tr><td class="obj">Aaron</td><td>world-prefixed: exodus_liberation_aaron</td></tr>
+      <tr><td class="obj">Miriam</td><td>world-prefixed: exodus_liberation_miriam</td></tr>
+    </table>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">The mountain</td><td class="cite">Exodus 19:18</td><td>"wrapped in smoke because the LORD had descended on it in fire"</td></tr>
+      <tr><td class="obj">The tablets</td><td class="cite">Exodus 31:18</td><td>"written with the finger of God" &mdash; the govern() object</td></tr>
+      <tr><td class="obj">The ascent</td><td class="cite">&mdash;</td><td>a second, separate relic joinable to the quest data &mdash; its label has to match the quest file byte-for-byte, so it can't share the mountain's own flavor relic</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(tablet)</span>"You receive the tablets, and the terms are no longer yours to set."</div></div>
+    <div class="close-line"><span class="lbl">close()</span>"Exodus 19:5 &mdash; If you will indeed obey my voice and keep my covenant, you shall be my treasured possession among all peoples."</div>
+    <blockquote class="speak">"The mountain stands as it is written."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>adherent = path.weave.lattice, level 4 &mdash; "the law is a lattice, commandments that hold each other in place. Weaving one is what receiving one feels like from the inside."</dd>
+      <dt>Lighting</dt><dd>true desert &mdash; hamada and wadi gravel, desert-varnished dark clasts, effectively no vegetation at landscape scale</dd>
+      <dt>Era window</dt><dd>&minus;1500 to &minus;1200, the Exodus generation &mdash; kept consistent across the chronicle, persons, and dweller markers on purpose: "a zone whose record speaks one century and whose people speak another is the era bug again"</dd>
+      <dt>Next</dt><dd>sanctum_jericho.davar &mdash; "the law given in the wilderness meets the land it was given for" (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>Seven figures were authored for "exodus_liberation" and never wired &mdash; verified by direct count, exactly seven, the same clean result as Noah and Mamre.</li>
+    </ul>
+  </section>
+
+  <!-- JERICHO -->
+  <section class="scene" id="jericho">
+    <div class="scene-head">
+      <span class="filetag">sanctum_jericho.davar</span>
+      <h2>Jericho</h2>
+      <span class="subtitle">Joshua 6 &mdash; a fight was put here twice, and taken out twice</span>
+    </div>
+    <blockquote class="speak">"Let the city say what it was."<footer>opening speak()</footer></blockquote>
+    <h3>What the city atlas actually is, and isn't</h3>
+    <p style="font-size:0.92rem;">83 cities, each with ten real research dimensions of prose &mdash; setting, population, water engineering, trade, religion, law, health, networks, archaeological significance. It's research, not geometry: no coordinates, no building list. So this zone speaks Jericho truly from that prose and builds a generic walled city, because the atlas can't supply the second and pretending otherwise would be an overclaim the rest of this lane already refuses to make elsewhere.</p>
+    <h3>The fight that got put in twice, and taken out twice</h3>
+    <p style="font-size:0.92rem;">This scene ran <code style="font-family:var(--font-mono)">trial("guardian", 5)</code> &mdash; a timing ring whose own failure state is literally <i>collapse</i>, against a wall that falls on the seventh circuit &mdash; for about an hour before a real measurement made a stronger case: across every wired scene, the chain held sixteen skill checks and zero fights, while 49 authored enemies and an entire unused combat system sat idle. Sixteen of the same verb in a row needed the floor to change. Jericho's own authored enemy, <code style="font-family:var(--font-mono)">canaanite_giant</code>, seemed like the obvious place.</p>
+    <p style="font-size:0.92rem;">It was tried, and reverted, twice, for two different real reasons:</p>
+    <ul class="devnotes" style="margin-top:0;">
+      <li><b>Measured, not guessed:</b> a genuinely fresh character walked from the welcome screen arrives here at level 27 (455 hp, 45 strength). <code style="font-family:var(--font-mono)">canaanite_giant</code> is 3000 hp / 144 damage &mdash; death in 3.2 hits against 67 needed to win. The engine scales enemies with the player, so no amount of levelling ever closes that gap. "Both were executions, not encounters."</li>
+      <li><b>The real reason:</b> Joshua 6 has no battle in it. The city isn't taken by the sword &mdash; seven circuits, seven trumpets, a shout on the seventh day, and the wall falls down flat. Swapping in combat "for variety" was a game-design reflex that made the engine assert a siege the text explicitly denies &mdash; the same rule already written into a different scene about Daniel and the lions, three hours earlier, and broken here without noticing.</li>
+    </ul>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Restored to the timing ring. Real combat still exists where the story actually has peril &mdash; a separate consequence branch off the Babylon scene &mdash; variety earned by the text, not imposed on it.</p>
+    <h3>Who's here</h3>
+    <table class="objects">
+      <tr><th>Figure</th><th>Note</th></tr>
+      <tr><td class="obj">Rahab</td><td>world-prefixed: conquest_canaan_rahab &mdash; at the wall</td></tr>
+      <tr><td class="obj">Joshua</td><td>bare id</td></tr>
+      <tr><td class="obj">Caleb</td><td>world-prefixed <i>wilderness_wandering</i>_caleb &mdash; his id still carries the previous world, because he's the one person who actually crosses from wandering into conquest</td></tr>
+      <tr><td class="obj">The siege engineer</td><td>a real correction: "Achan" was written from memory of the narrative and the engine refused it by name &mdash; the world holds five real souls and Achan isn't one. The siege engineer took the slot instead: "the man who studies what Rahab lives inside."</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(walls)</span>"You keep the circuit, and hold the shout until the seventh day."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Quest: "Two Spies at the Door," Rahab Arc, meet_npcs &times;4 &mdash; chosen because meet_npcs is one of the three types this engine can actually judge; Sinai had to settle for an UNJUDGED theology quest, this zone completes for real.</p>
+    <div class="close-line"><span class="lbl">close()</span>citydim("archaeology_significance") &mdash; pulled live from the city atlas, not fixed in this file</div>
+    <blockquote class="speak">"The city stands, and it is not silent."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>guardian = pulse.timing.ring, level 5</dd>
+      <dt>Gate</dt><dd>requires the Sinai quest completed first &mdash; and like every gate in this game, it names what's missing rather than just barring the road</dd>
+      <dt>Biome</dt><dd>oasis &mdash; irrigated green at the spring against bare badland a short walk away, the boundary an irrigation line, not a gradient</dd>
+      <dt>Next</dt><dd>sanctum_jerusalem.davar &mdash; "conquest settles into kingdom; the city becomes David's" (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>A 145-instance text-corruption bug (a hyphen mis-decoded as a capital "I" &mdash; "et-I-Tell" for et-Tell, "Beth-I-horon" for Beth-horon) sat across 18 atlas chunk files for months before being caught and repaired.</li>
+      <li>The engine had no palm tree at all until this zone needed one &mdash; an honest comment admitting "olive is the closest in habit" is what prompted building a real fifth tree generator, since date palms aren't a branching plant and can't be described by the existing four rules.</li>
+      <li>A separate quest-density database (day_walk_quests.db, 3,861 quests / 40,163 activities) ties 27 quests to Jericho specifically; every row was held public:HOLD until Ryan cleared the local, unpublished game to read it in-thread on 2026-08-16 &mdash; the public-website hold on the same data stands untouched.</li>
+      <li>Seven figures were authored for "conquest_canaan" and never wired &mdash; verified by direct count, exactly seven, the same clean result as every prior zone in this stretch.</li>
+    </ul>
+  </section>
+
+  <!-- JERUSALEM -->
+  <section class="scene" id="jerusalem">
+    <div class="scene-head">
+      <span class="filetag">sanctum_jerusalem.davar</span>
+      <h2>Jerusalem</h2>
+      <span class="subtitle">2 Samuel, Psalms &mdash; one file, three centuries, phased by what you've already walked</span>
+    </div>
+    <blockquote class="speak">"Jerusalem. The city of David, the joy of the whole earth."<footer>opening speak()</footer></blockquote>
+    <h3>The headline mechanic: the city you return to is not the city you left</h3>
+    <p style="font-size:0.92rem;">This single scene file holds <b>three real historical states of the same ground</b> and shows exactly one, keyed to what the player has actually done &mdash; the same idea as WoW's phasing, described in the file's own words. Reach Jerusalem before Babylon and Solomon's temple stands whole. Walk the exile and return, and it's gone, because 2 Kings 25 says it was burned. Nothing here is authored twice: one scene, one set of objects, each gated <code style="font-family:var(--font-mono)">onlyif</code>/<code style="font-family:var(--font-mono)">onlyuntil</code> a zone the player has or hasn't visited yet.</p>
+    <table class="objects">
+      <tr><th>Era</th><th>Window</th><th>What's standing</th></tr>
+      <tr><td class="obj">David's city</td><td class="cite">&minus;1100 to &minus;900</td><td>Solomon's temple, whole</td></tr>
+      <tr><td class="obj">The return from exile</td><td class="cite">&minus;600 to &minus;400</td><td>the burned temple ruin and a rebuilt altar &mdash; gated after Babylon, before Acts</td></tr>
+      <tr><td class="obj">Acts era</td><td class="cite">AD 20&ndash;80</td><td>Herod's Western Wall &mdash; gated after Acts only</td></tr>
+    </table>
+    <h3>A real bug this exact mechanic caught, in its own scene</h3>
+    <p style="font-size:0.92rem;">The dated-persons marker was shipped once, briefly, without its era window &mdash; and stood David, Solomon, Nehemiah, Nicodemus, and Zerubbabel together in one frame: Nicodemus, a thousand years too early, in David's own city. The file's own words: "the exact era bug chronicle() and people() were each shipped with, committed a third time by me, in the very scene where I had just written that standing David in the Acts zone would be wrong." Caught by checking the date windows against the data before it ever rendered, not by seeing it in game.</p>
+    <h3>Objects, built to real evidence and real uncertainty alike</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">The kinnor (harp)</td><td class="cite">Josephus, Ant. 7.12.3</td><td>an asymmetric-arm lyre per the Megiddo ivory and the Lachish reliefs, 10 strings; a later, symmetric Bar Kokhba coin design was deliberately excluded &mdash; it may show a Greco-Roman instrument, not this one</td></tr>
+      <tr><td class="obj">The crown</td><td class="cite">2 Sam 1:10</td><td>genuinely uncertain: no Israelite or Judahite royal crown has ever been found. Built as a plain gold band &mdash; the real word is <i>nezer</i>, a bound circlet, not the later "keter" spiked-crown usage</td></tr>
+      <tr><td class="obj">The temple ruin</td><td class="cite">2 Kings 25:9</td><td>toppled dressed stone, a broken column echoing the named pillars Jachin and Boaz &mdash; "a representative ruin, not a reconstruction of the physically undiscovered First Temple"</td></tr>
+      <tr><td class="obj">The altar (Mizbeach)</td><td class="cite">Exodus 20:25&ndash;26</td><td>uncut stones, a ramp instead of steps (Mishnah Middot 3:4), four corner horns &mdash; the engine's existing generic altar prop was rejected here as dressed church-altar geometry, wrong for this object</td></tr>
+      <tr><td class="obj">The Western Wall</td><td class="cite">Josephus, Ant. 15.11.3</td><td>real Herodian bossed-ashlar masonry, dry-laid &mdash; originally placed across all three eras by mistake, a 500&ndash;900 year anachronism in the first two, later gated to the Acts era alone</td></tr>
+    </table>
+    <h3>Why there's no generated name pool here</h3>
+    <p style="font-size:0.92rem;">Babylon got named men straight from the cuneiform tablets it was excavated from. Jerusalem couldn't get the equivalent: building a Hebrew name pool from tagged interlinear text was tried and deliberately stopped, because the proper-noun tag in that data conflates person, place, <i>and the divine name</i> together &mdash; a real risk of putting God's own name into a random NPC pool. So there is no generated pool at all. Instead the scene stands only the 336 people the chronology actually attests on this exact ground, by name, with the years they were here. "The safest naming system is the one that never invents a name."</p>
+    <h3>Who's in Solomon's court</h3>
+    <table class="objects">
+      <tr><th>Figure</th><th>Note</th></tr>
+      <tr><td class="obj">Solomon</td><td>bare id</td></tr>
+      <tr><td class="obj">Bathsheba, Nathan, court musician</td><td>world-prefixed under kingdom_united</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(harp)</span>"You take up the harp, and the city learns a song it will keep singing in exile."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Quest: "Two Mothers, One Child," Solomon Arc, meet_npcs &times;4 (1 Kings 3).</p>
+    <div class="close-line"><span class="lbl">close()</span>"2 Samuel 7:16 &mdash; Your house and your kingdom shall be made sure forever before me. Your throne shall be established forever."</div>
+    <blockquote class="speak">"The city of the great King stands."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>psalmist = pulse.sequence.glyphwheel, level 5 &mdash; "David's city, and the psalms are the sequence this whole game keeps quoting. The only place this mechanic could belong."</dd>
+      <dt>Also present</dt><dd>485 quests tie to Jerusalem specifically in the separate quest-density database &mdash; more than any other single place in that corpus</dd>
+      <dt>Next</dt><dd>sanctum_prophets.davar &mdash; "the kingdom divides, and the prophets are sent to it" (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>Arrival used to drop every player inside a solid wall.</b> Before this scene declared a camera, every player on the 21-scene chain hit the same broken opening frame at this exact point: white limestone columns, no sky, no city, no horizon &mdash; the default composed eye landed inside the temple model. Not a placement mistake; scenes simply had no way to say where they open at all.</li>
+      <li>Seven figures were authored for "kingdom_united" and never wired &mdash; verified by direct count, exactly seven. Five scenes in a row now have checked out clean against the comment's own number.</li>
+    </ul>
+  </section>
+
+  <!-- PROPHETS -->
+  <section class="scene" id="prophets">
+    <div class="scene-head">
+      <span class="filetag">sanctum_prophets.davar</span>
+      <h2>The Prophets</h2>
+      <span class="subtitle">Elijah, Elisha, Isaiah, Jeremiah &mdash; a voice sent out, standing in the land it was sent to</span>
+    </div>
+    <blockquote class="speak">"The voice of one crying in the wilderness: Prepare the way of the LORD."<footer>opening speak()</footer></blockquote>
+    <h3>Where this zone actually is, and where it points</h3>
+    <p style="font-size:0.92rem;">The ground itself is Samaria &mdash; the biome, the chronicle, and the persons markers are all keyed there, era &minus;900 to &minus;700, the divided kingdom's prophets. But the city cited for craft data is <b>Nineveh</b>, because "Jonah is sent to Nineveh and the prophets' zone is where that voice is sent from." Eight real crafts stand here as a result &mdash; not Samaria's, Nineveh's own, drawn from 10,731 tablets its ground actually gave up. "Different city, different crafts: the lock is the ground," even when the ground being unlocked isn't the ground the player is standing on.</p>
+    <h3>A deliberate staging choice: which side of the fire</h3>
+    <p style="font-size:0.92rem;">Five figures stand here, and where they stand is a decision, not a layout default: Elijah and Elisha (bare ids) are placed apart from Ahab and Jezebel and the widow of Zarephath (all world-prefixed <i>prophets_era_</i>). Ahab and Jezebel stand together rather than near the prophets &mdash; "the zone should show the reader which side of the fire each of them is on."</p>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Hebrew</th><th>Citation</th></tr>
+      <tr><td class="obj">The mount</td><td class="cite">נָבִיא Navi ("prophet")</td><td>1 Kings 18:39</td></tr>
+      <tr><td class="obj">The fire</td><td class="cite">אֵשׁ Esh ("fire")</td><td>1 Kings 18:38</td></tr>
+      <tr><td class="obj">The scroll</td><td class="cite">מְגִלָּה Megillah ("scroll")</td><td>Jeremiah 36:2</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(scroll)</span>"You take the scroll and eat it, and the word is in your mouth before it is in theirs."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Quest: "Anointing Kings," meet_npcs &times;5, chosen over the arc's "Fed by Ravens" (also judgeable) because this zone is a gathering, not a wilderness &mdash; it already holds fire, scroll, and grove. The arc's showdown quests (Carmel, Fire from Heaven) are defeat_enemies type, which this engine still can't judge.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Isaiah 6:8 &mdash; Here I am! Send me."</div>
+    <blockquote class="speak">"The prophets spoke, and the word of the LORD came to pass."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>witness = pulse.echo.cone, level 5 &mdash; "a prophet is a voice sent out and answered back &mdash; Ezekiel 3 eats the scroll before he speaks it. An echo cone is exactly that shape."</dd>
+      <dt>Next</dt><dd>sanctum_babylon.davar &mdash; "the prophets warned of exile; the exile arrives" (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>Seven figures were authored for "prophets_era" and never wired &mdash; verified by direct count, exactly seven. Sixth clean match in a row against the source comment's own number.</li>
+    </ul>
+  </section>
+
+  <!-- BABYLON -->
+  <section class="scene" id="babylon">
+    <div class="scene-head">
+      <span class="filetag">sanctum_babylon.davar</span>
+      <h2>Babylon</h2>
+      <span class="subtitle">Psalm 137, Daniel, Ezekiel &mdash; the first real branch in the whole game</span>
+    </div>
+    <blockquote class="speak">"By the rivers of Babylon, we sat down and wept."<footer>opening speak()</footer></blockquote>
+    <h3>Where the Bābili fix actually came from</h3>
+    <p style="font-size:0.92rem;">This is the scene that first discovered Babylon wasn't in the atlas at all &mdash; the original 83-city atlas simply didn't have it, so <code style="font-family:var(--font-mono)">city("Babylon")</code> returned "no city in the atlas." A larger, real 238-city CDLI-built atlas existed already, but only inside a separate DNCZ store, and got installed only after a set comparison proved it a strict superset of the old one: 238 vs 83, zero keys lost, 155 gained. Then a second, worse bug turned up underneath the first: even after installing it, only 128 of 238 cities ever loaded, because a hardcoded cap silently dropped the other 110 every single load. The drop counter's own comment said "REPORTED, never silent" &mdash; and nothing in the code had ever actually read it. Cap raised, counter wired to print.</p>
+    <h3>A second silent hard stop, twin of Noah's</h3>
+    <p style="font-size:0.92rem;">The willows of Psalm 137:2 were bound with <code style="font-family:var(--font-mono)">near(river, ...)</code> &mdash; and like <code style="font-family:var(--font-mono)">lake()</code>, <code style="font-family:var(--font-mono)">river()</code> carves terrain and returns a number, not a form. The line errored on every run, which killed everything after it &mdash; the lion's near() and the close() both &mdash; so Babylon never handed off to the next scene. Same class of bug as Noah's flood water, caught the same way: by walking the whole chain and watching exactly where it stopped. The scripture itself was kept in the file the entire time it was broken, commented out and waiting, because "the words are the point of the scene" &mdash; restored once the willows had a real placed form (a cluster of poplars) to hang the near() on instead of the river directly.</p>
+    <h3>The first real branch</h3>
+    <p style="font-size:0.92rem;">Ryan, in-thread: <i>"For Daniel it wasn't a fight but if that character betrayed the king perhaps it would be?"</i> This scene is that question, built. Two governs stand here and they do not lead to the same place:</p>
+    <div class="choices">
+      <div class="choice"><span class="obj">govern(lion)</span>"You keep the window open toward Jerusalem, three times a day, where they can see you." &rarr; continues on to Nehemiah, as before</div>
+      <div class="choice"><span class="obj">govern(decree)</span>"You let the window stay shut for thirty days, and there is nothing for anyone to report." &rarr; branches instead to sanctum_lions_den.davar</div>
+    </div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">The wording is flagged as a first draft, Ryan's to correct: Daniel 6 is theologically delicate, since the man who <i>defies</i> the decree is the one who's delivered &mdash; so "betrayal" can't simply mean praying. The safe path is written thin on purpose rather than invent a theology for it. The branch itself is enforced by the engine: a form can only gate a path once it actually has a govern() to check, so the branching line has to come after both choices are declared, not before.</p>
+    <h3>Combat considered here too, and refused for the same reason as Jericho</h3>
+    <p style="font-size:0.92rem;"><code style="font-family:var(--font-mono)">babylonian_soldier</code> exists as a real authored enemy, and a lions' den is the obvious place a designer reaches for combat. Refused anyway: this scene's own near() already quotes Daniel 6:22 &mdash; "My God sent his angel and shut the lions' mouths." The whole point of the chapter is that it wasn't a fight; arming one would have the engine contradict the verse printed three lines above it.</p>
+    <h3>Real named people, not a generated pool</h3>
+    <p style="font-size:0.92rem;">Ryan: <i>"use names based on city for each type of merchant kind/lord etc."</i> The alternative already existed elsewhere in the source tree and was literally "Merchant 1" through "Merchant 589." Here, every dweller is a person the excavated tablets actually attest at Babylon &mdash; found by the scribal determinative mark written before a name in the cuneiform itself ({disz} for a man, {f} for a woman) and given a role by the kind of document that names them. Babylon's tablets attest <b>54 lords, 14 stewards, 13 townsfolk, 5 merchants, 4 messengers</b> &mdash; among the stewards, Egibi, the actual historical banking house this city is remembered for. Both this and the craft data below refuse to run at all without <code style="font-family:var(--font-mono)">city()</code> called first: a person and a skill both belong to a place.</p>
+    <h3>What the atlas shows, and what it honestly doesn't</h3>
+    <p style="font-size:0.92rem;">Babylon's atlas record carries ten dimensions and only five have real content; the other five are literal enrichment placeholders ("Requires dedicated trade-route and commodity enrichment," and so on). Those five are deliberately never shown to a player &mdash; "showing him the scaffolding and calling it the building." Of what does show: population_social reports the actual genres and languages the excavated tablets carry &mdash; astronomical, royal/monumental, legal; Akkadian, Sumerian, Elamite &mdash; astronomical leading at 41% of the whole record, "the corpus agreeing, on its own, that Babylon is the sky-watching city." Nine real crafts stand here from a 108,897-record cuneiform index.</p>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">The ziggurat/shrine</td><td class="cite">Genesis 11:4</td><td>a mudbrick shrine, not a Greek temple &mdash; same architectural correction as Ur and Babel</td></tr>
+      <tr><td class="obj">The willows</td><td class="cite">Psalm 137:1&ndash;2</td><td>built as poplars, not weeping willows &mdash; the Hebrew term's leading identification is <i>Populus euphratica</i>, and true weeping willow isn't native to or cultivated in Mesopotamia</td></tr>
+      <tr><td class="obj">The tablet house</td><td class="cite">&mdash;</td><td>the real Mesopotamian scribal archive type (Akkadian <i>bit tuppi</i>) &mdash; flat mudbrick roof, wall niches for tablet storage; the attested architecture, not a claim about one named building</td></tr>
+      <tr><td class="obj">The lion</td><td class="cite">Daniel 6:22</td><td>a real procedural quadruped generator that already existed and had never been wired into a scene before this one</td></tr>
+      <tr><td class="obj">The king's decree</td><td class="cite">Daniel 6:7</td><td>genuinely uncertain medium &mdash; the text never says what it was written on. Built as an inscribed clay tablet with a cylinder-seal impression, the period- and place-plausible choice for Babylon's own local administration, not a claim that this specific decree is attested</td></tr>
+    </table>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">Quest: "The Testimony of the King," Nebuchadnezzar Arc, meet_npcs &times;3 &mdash; the plain "exile" arc had eight quests and not one was judgeable by this engine (cook, theology, two survive_days, two defeat_enemies, worship, scripture_memory); this is the one arc that actually fit both the ground and what the engine can grade.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Ezekiel 1:1 &mdash; The heavens were opened, and I saw visions of God."</div>
+    <blockquote class="speak">"Babylon stands. The exile is the furnace where prophets were forged."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>loresmith = pulse.rune.stamp, level 6 &mdash; reused from Interpreter's House ("a hand writes MENE MENE TEKEL on a wall and only one man can read it")</dd>
+      <dt>Era window</dt><dd>&minus;650 to &minus;500, Daniel's Babylon &mdash; explicitly not the older Kassite-era city on the same ground</dd>
+      <dt>Also present</dt><dd>52 quests tie to Babylon in the separate quest-density database</dd>
+      <dt>Next</dt><dd>sanctum_nippur.davar on the main path (the willows path); sanctum_lions_den.davar on the branch (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li><b>The road past Babylon was edited twice for the same reason as Noah's</b> &mdash; not skipping scripture. It first led straight to Nehemiah, then got a Susa scene inserted (Nehemiah 1:1, "as I was in Shushan the palace"), then got a Nippur scene inserted <i>ahead</i> of Susa because Babylon&rarr;Susa alone skipped sixty years and the entire prophet of the exile: the deportation is &minus;597, Ezekiel is at the Chebar canal &minus;593 to &minus;585, Esther at Shushan is &minus;479. Nippur carries the road on to Susa; nothing downstream moved.</li>
+      <li>Seven figures were authored for "babylonian_exile" and never wired &mdash; verified by direct count, exactly seven. Seventh clean match in a row.</li>
+    </ul>
+  </section>
+
+  <!-- NIPPUR -->
+  <section class="scene" id="nippur">
+    <div class="scene-head">
+      <span class="filetag">sanctum_nippur.davar</span>
+      <h2>Nippur</h2>
+      <span class="subtitle">Ezekiel 1&ndash;37 &mdash; the first scene built by a genuinely different method</span>
+    </div>
+    <blockquote class="speak">"The canal called Chebar. The captives are settled here, and the heavens are opened."<footer>opening speak()</footer></blockquote>
+    <h3>The first two-pass scene</h3>
+    <p style="font-size:0.92rem;">A generator derived everything below that comes straight out of the record &mdash; the atlas description, the crafts Nippur's own tablets attest, its named dwellers, the dated events &mdash; and then refused to write five lines on its own: what the ground says, the decision it asks, the word it ends on, the two spoken lines. The scene was held out of the game as a hard failure until those five were replaced from a real source, not invented. Every quoted line below was read out of a 31,102-verse Bible database, not written from memory.</p>
+    <h3>A real bug the generator caught in itself</h3>
+    <p style="font-size:0.92rem;">It first reported "0 dated events at Nippur" &mdash; which was false. The chronology doesn't key events under the city's name at all; it keys them under "Chebar Canal, Nippur region" and "Tel-abib" separately, two different namespaces than the city lookup uses. Trusting that zero would have meant authoring a generic Mesopotamian city on top of the exact ground where Ezekiel saw the heavens open. The generator now says so explicitly instead of reporting a bare zero.</p>
+    <h3>The archaeology and the book agree, and nobody arranged it</h3>
+    <p style="font-size:0.92rem;">Nippur's excavated tablets come out 44.4% administrative, 17.7% literary, 14.3% lexical &mdash; a city of clerks and copyists, storehouse reckoning and sign-lists. Ezekiel is a priest given visions and told to write them down, in the one place in the ancient world whose entire trade was writing things down so they'd survive the people who wrote them. The file notes this is the same pattern Susa shows later (61.4% administrative tablets under a book about irrevocable royal decrees) &mdash; "it keeps happening because the record is real."</p>
+    <h3>Where he actually sat</h3>
+    <p style="font-size:0.92rem;">Ezekiel 3:15 &mdash; called "the quietest verse in the book" &mdash; has him sit down where the captives sit, for seven days, before he prophesies anything at all. The chronology files him at Tel-abib across four separate dated events spanning eleven years: not a stop on the way to the visions, but where he lived.</p>
+    <h3>Who's here</h3>
+    <table class="objects">
+      <tr><th>Figure</th><th>Note</th></tr>
+      <tr><td class="obj">Ezekiel</td><td>bare id, among the exiles here</td></tr>
+      <tr><td class="obj">Jeremiah</td><td>bare id &mdash; present as a correspondent, not a resident: he wrote to the exiles from Jerusalem (Jeremiah 29) while staying in Judah himself</td></tr>
+      <tr><td class="obj">An exile leader, a captive</td><td>world-prefixed under babylonian_exile &mdash; the same namespace the Babylon scene's own cast uses</td></tr>
+    </table>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(bones)</span>"You are asked whether the dead can live, and you do not answer for God. You say: O Lord GOD, thou knowest."</div></div>
+    <p style="font-size:0.92rem;">No trial here, and the file is explicit this is a pattern, not a one-off: "the same reason as Esther and Abraham." Ezekiel 37:3 puts a question to a man in a valley of dry bones, and the only honest answer is to hand the question back. A skill check would turn resurrection into something the player earns by playing well &mdash; the exact opposite of what the passage says, since the bones live because God breathes on them, not because Ezekiel proves anything. The decision is the whole mechanic; there's nothing to win.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Ezekiel 36:26 &mdash; A new heart also will I give you, and a new spirit will I put within you: and I will take away the stony heart out of your flesh, and I will give you an heart of flesh."</div>
+    <blockquote class="speak">"He sat where they sat, seven days, and said nothing. Then he was told to speak to bones."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>none &mdash; deliberate, see above</dd>
+      <dt>Quest</dt><dd>"Son of Man, I Have Made You a Watchman," Ezekiel Arc, meet_npcs &times;5</dd>
+      <dt>Real people attested</dt><dd>240 merchants and 66 loremasters named in Nippur's own tablets &mdash; "the loremasters are the point: this is the trade the zone is about"</dd>
+      <dt>Next</dt><dd>sanctum_kalhu.davar &mdash; the first stop of a planned Assyrian detour the file names outright: Kalhu &rarr; Assur &rarr; Uruk &rarr; Sippar-Yahrurum &rarr; Borsippa, then back to Susa (none covered in this document)</dd>
+    </dl>
+  </section>
+
+  <!-- LION'S DEN -->
+  <section class="scene" id="lionsden">
+    <div class="scene-head">
+      <span class="filetag">sanctum_lions_den.davar</span>
+      <h2>The Lion's Den</h2>
+      <span class="subtitle">Babylon's branch &mdash; the only real fight in this whole document</span>
+    </div>
+    <div class="corresp">Reachable exactly one way: taking the "let the window stay shut" choice in Babylon. Take the faithful path instead and this file never loads. The design is Ryan's own, from an in-thread question about whether Daniel's story could branch on betrayal; the file states plainly that the prose here is deliberately minimal and expects to be rewritten &mdash; "it exists to prove the branch fires and to give him something concrete to correct."</div>
+    <blockquote class="speak">"The den is the same den. What is different is who went down into it."<footer>opening speak()</footer></blockquote>
+    <h3>What this scene is careful never to say</h3>
+    <p style="font-size:0.92rem;">Babylon's own near() quotes Daniel 6:22 &mdash; "My God sent his angel and shut the lions' mouths." That line belongs to the man who kept praying with the window open. This den doesn't quote it, and doesn't contradict it either: "it is what a den is when it is only a den."</p>
+    <h3>Objects</h3>
+    <table class="objects">
+      <tr><th>Object</th><th>Citation</th><th>Note</th></tr>
+      <tr><td class="obj">The sealed stone</td><td class="cite">Daniel 6:17</td><td>laid on the mouth of the den, sealed with the king's own signet</td></tr>
+      <tr><td class="obj">The dark</td><td class="cite">&mdash;</td><td>a deliberately negative object: "there is no window here to open toward Jerusalem"</td></tr>
+    </table>
+    <h3>Who's here</h3>
+    <p style="font-size:0.9rem; color:var(--ink-dim);">Daniel (bare id) and the same court from the Babylon scene &mdash; Nebuchadnezzar, the official, the exile leader, the captive &mdash; the identical character records, reused rather than re-authored, because it's the same court on a different day.</p>
+    <h3>Real combat, deliberately, and the bug it produced</h3>
+    <p style="font-size:0.92rem;"><code style="font-family:var(--font-mono)">fight()</code>, not <code style="font-family:var(--font-mono)">trial()</code> &mdash; the two can't share a scene, they claim the same input keys. Babylon keeps its rune-stamp trial because Babylon is a reading; "this zone is not a reading." The enemy is <code style="font-family:var(--font-mono)">oppression_chainbearer</code>, chosen because the bestiary has no actual lion &mdash; naming one that doesn't exist would fail to load entirely rather than just be thematically imperfect.</p>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">A real bug came out of this: <code style="font-family:var(--font-mono)">fight()</code>'s second argument is the <i>player's own level</i>, not a difficulty setting. Passed a small number expecting it to tune difficulty, it instead made the player weaker &mdash; producing a measured 1.1-second death.</p>
+    <div class="close-line"><span class="lbl">close()</span>"Daniel 6:20 &mdash; O Daniel, servant of the living God, has your God been able to deliver you?"</div>
+    <blockquote class="speak">"The stone is over the mouth of it."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Quest</dt><dd>"Those Who Are Wise Will Shine Like Stars," Daniel Arc, meet_npcs &times;7 &mdash; deliberately not the exile arc's own "The Lion's Den" quest, which is a defeat_enemies type this engine can't judge and, per the file, "the wrong mechanic twice over"</dd>
+      <dt>Lighting</dt><dd>underground &mdash; no sun() call at all, low exposure, a pit rather than a plaza</dd>
+      <dt>Next</dt><dd>sanctum_nehemiah.davar &mdash; rejoins the main spine regardless of which path brought the player here: "the branch changes what the player carries out of Babylon, not where history goes next" (not covered in this document)</dd>
+    </dl>
+  </section>
+
+  <!-- KALHU -->
+  <section class="scene" id="kalhu">
+    <div class="scene-head">
+      <span class="filetag">sanctum_kalhu.davar</span>
+      <h2>Kalhu</h2>
+      <span class="subtitle">Genesis 10:11&ndash;12 &mdash; the city Ryan told Claude to interpret, not him</span>
+    </div>
+    <blockquote class="speak">"Kalhu, which Genesis calls Calah. Two thousand tablets came out of this ground, and more than half of them are a king telling you what he did."<footer>opening speak()</footer></blockquote>
+    <h3>Generated, then refused, then overruled</h3>
+    <p style="font-size:0.92rem;">This scene is machine-generated from the excavated record &mdash; place, era, crafts, dwellers, dated markers, all derived and counted rather than assumed. The generator refused to write the two lines that carry actual meaning: the decision the zone asks, and the word it ends on. Its own linter went further and flagged "must not be filled by an agent" &mdash; until Ryan overruled that in-thread, 2026-08-13: <i>"I need you to do it, not me. You do it. You have more information than I do."</i> His instruction outranked the refusal. Both lines below are stated as derived directly from this city's own excavated numbers, not from an added doctrine, and flagged for anyone to overwrite that isn't theirs.</p>
+    <h3>What the record actually supplied</h3>
+    <table class="objects">
+      <tr><th>Measure</th><th>Count</th></tr>
+      <tr><td class="obj">Dated events</td><td>0</td></tr>
+      <tr><td class="obj">Attested persons</td><td>0</td></tr>
+      <tr><td class="obj">Crafts in its tablets</td><td>7</td></tr>
+      <tr><td class="obj">Attested dwellers</td><td>315 total &mdash; 304 lords, 10 merchants, 1 steward</td></tr>
+    </table>
+    <h3>What the ratio actually says</h3>
+    <p style="font-size:0.92rem;">2,225 tablets were excavated at Nimrud, Kalhu's site. 57.8% (1,287 of them) are royal or monumental &mdash; a king's deeds cut into stone. Prayer and incantation together are 3.6%; omens are 3.0%. "This city wrote down its rulers sixteen times more often than it wrote down its prayers." Of the 315 named people the tablets attest here, 304 are lords; the other eleven &mdash; a steward and ten merchants &mdash; were never carved into anything. The govern() below is built directly on that asymmetry.</p>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(stone)</span>"You leave the stone uncut. What you did here will have to be carried by the people who saw it."</div></div>
+    <p style="font-size:0.85rem; color:var(--ink-dim);">The near() on the same stone states the case first: 304 of 315 recovered names belong to lords; eleven belong to a steward and ten merchants, and no one cut those into anything. "This is a city of the recorded deed, so the choice it asks is whether your own name goes on the wall."</p>
+    <div class="close-line"><span class="lbl">close()</span>"Genesis 10:11&ndash;12 &mdash; Out of that land he went forth to Asshur, and builded Nineveh, and Rehoboth-Ir, and Calah, and Resen between Nineveh and Calah: the same is a great city."</div>
+    <blockquote class="speak">"The great city is a mound now, and the tablets outlived the wall."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>none, and no quest either &mdash; the simplest scene in this document: atlas data plus one derived decision</dd>
+      <dt>Biome</dt><dd>dry-farming steppe &mdash; straw-gold most of the year, essentially treeless outside the walled royal parks</dd>
+      <dt>Linkage</dt><dd><code style="font-family:var(--font-mono)">follows("sanctum_nippur.davar")</code>, not an explicit next() &mdash; position in the chain comes from the scene indexer rather than a hard-coded pointer</dd>
+      <dt>Next</dt><dd>Assur, per the detour named in Nippur's own file (not covered in this document)</dd>
+    </dl>
+    <ul class="devnotes">
+      <li>The closing verse is quoted exactly as scripture leaves it: Genesis 10:11&ndash;12 names Calah among four cities and says nothing about what became of any of them. The scene doesn't add an ending scripture doesn't provide.</li>
+    </ul>
+  </section>
+
+  <!-- ASSUR -->
+  <section class="scene" id="assur">
+    <div class="scene-head">
+      <span class="filetag">sanctum_assur.davar</span>
+      <h2>Assur</h2>
+      <span class="subtitle">Genesis 10:11 &mdash; same method as Kalhu, a different number to build a decision on</span>
+    </div>
+    <blockquote class="speak">"Assur named a god, then a city, then an empire. Five hundred and eighty-four of its tablets are somebody copying out a story so it would still be there afterward."<footer>opening speak()</footer></blockquote>
+    <p style="font-size:0.9rem; color:var(--ink-dim);">Built by the same generator, under the same 2026-08-13 overrule as Kalhu &mdash; the meaning lines are Claude's, on Ryan's direct instruction, stated as derived from Assur's own excavated numbers rather than invented.</p>
+    <h3>What the ratio here says, and it isn't Kalhu's ratio</h3>
+    <p style="font-size:0.92rem;">2,909 tablets from Qalat Sherqat (Assur's site): 37.1% royal/monumental, 25.8% legal, and &mdash; the distinctive number &mdash; <b>20.1% literary, 584 copied epics</b>. One tablet in five here is someone copying out a story to keep it alive. Of every named dweller the excavated record attests, only three are loremasters. The decision is built on that gap between the volume of copying and the number of people ever credited for it.</p>
+    <h3>The one choice</h3>
+    <div class="choices"><div class="choice"><span class="obj">govern(stone)</span>"You copy the line out again, knowing the hand that wrote it first is not named anywhere in this city."</div></div>
+    <div class="close-line"><span class="lbl">close()</span>"Genesis 10:11 &mdash; Out of that land he went forth to Asshur."</div>
+    <blockquote class="speak">"The empire is gone and the copies are what is left."<footer>closing speak()</footer></blockquote>
+    <dl class="facts">
+      <dt>Trial</dt><dd>none, no quest &mdash; same shape as Kalhu</dd>
+      <dt>Biome</dt><dd>dry-farming steppe, same as Kalhu</dd>
+      <dt>Linkage</dt><dd><code style="font-family:var(--font-mono)">follows("sanctum_kalhu.davar")</code>, no explicit next()</dd>
+      <dt>Next</dt><dd>Uruk, per the announced detour (not covered in this document)</dd>
+    </dl>
+  </section>
+
+  <footer class="page">
+    <p><b>Chain, in play order:</b> welcome &rarr; avatar_select &rarr; creator &rarr; pilgrim_wake &rarr; interpreter_house &rarr; hill_of_cost &rarr; palace_courage &rarr; grove &rarr; academy &rarr; eden &rarr; noah &rarr; babel &rarr; ur &rarr; mamre &rarr; sinai &rarr; jericho &rarr; jerusalem &rarr; prophets &rarr; babylon &rarr; { nippur &rarr; kalhu &rarr; assur &rarr; uruk&hellip; | lions_den } &rarr; nehemiah (not covered in this document).</p>
+    <p><b>Trial difficulty ramp:</b> pilgrim 2 &middot; loresmith 3 (interpreter_house), 6 (babylon) &middot; zealwright 4 &middot; guardian 5 (palace_courage &amp; jericho) &middot; witness 4 (academy) &middot; witness 5 (prophets) &middot; steward 3 (eden) &middot; sentinel 3 (noah) &middot; hearthkeeper 4 (mamre) &middot; adherent 4 (sinai) &middot; psalmist 5 (jerusalem). Babel, Ur, Nippur, Kalhu, and Assur carry no trial &mdash; pure-decision beats, on purpose. The Lion's Den carries a fight instead of a trial &mdash; the one scene in this document with real combat.</p>
+  </footer>
+
+</div>
