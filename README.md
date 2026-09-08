@@ -1,133 +1,104 @@
 # Dancz Projects
 
-This is the public project index for [Dancz Ministries](https://danczministries.com) and the surrounding estate. Built and maintained by Ryan Dancz.
+**Dancz Ministries** | [danczministries.com](https://danczministries.com) | ryan@danczministries.com
 
-Ryan is a USAF veteran (15.5 years) and MSW candidate at USC. He is not a licensed therapist or counselor. He has been building this estate solo since October 2025.
-
----
-
-## Live Site
-
-**[danczministries.com](https://danczministries.com)** — the live ministry site. It runs on DAVAR, a native C HTTP server built from scratch. No WordPress. No Node. No third-party runtime. The Bible study surface, give flow, and coaching pages are all DAVAR-native.
+This repository holds active projects across game development, ministry tools, funding documentation, and research. Maintained by Ryan Dancz. USAF veteran (15.5 years, 100% P&T disabled), MSW candidate at USC, biblical chronology researcher, and founder of Dancz Ministries LLC.
 
 ---
 
-## Apps
+## Project Files in This Repo
 
-### RuachDavid Mobile
-A faith-based mobile app for Bible study, daily life ops, and Dave AI interaction.
+### `/scripture-gems/`
+Match-3 Bible puzzle game. Uses public domain KJV data from the [biblelua-data](https://github.com/majinboux/biblelua-data) repo. Ad-supported with a $2.99 premium tier. All scripture is public domain (pre-1928).
 
-- Platform: React Native / Expo
-- Status: Build 37 produced (EAS). Pending App Store submission.
-- Repo: [ruach-david-mobile](https://github.com/majinboux/ruach-david-mobile)
+| File | Description |
+|------|-------------|
+| `ScriptureGems_v1.html` | Initial prototype. Basic match-3, 30 embedded KJV verses. |
+| `ScriptureGems_v2.html` | Live KJV fetch from biblelua-data repo, 7-day cache, translation picker. |
+| `ScriptureGems_v3.html` | Full production build. All 8 retention mechanics, daily streak, VOTD, lives, leaderboard. |
 
-### RuachDavid Desktop
-Electron + React desktop app.
+**8 Retention Mechanics:** Tutorial first level, One More Try popup, Lives system, 5-more-moves offer, Daily jackpot, Weekly leaderboard, Compound streak rewards, Push notifications
 
-- Status: Production web build passes. Backend integration in progress.
-- Repo: [dave-daveos-showcase](https://github.com/majinboux/dave-daveos-showcase)
+**Monetization:** Banner ads, Interstitial ads every 2 levels, $2.99 Remove Ads, $0.99 Lives, $0.99 More Moves
 
----
-
-## Games
-
-### Sanctum of Spiritborn
-A biblical RPG built in Godot 4. Scripture-grounded world, RPG mechanics, and cooperative multiplayer target.
-
-- Engine: Godot 4
-- Status: Player path scenes verified. 143 MB Windows export pack tested.
-- Repo: [SanctumofSpiritborn](https://github.com/majinboux/SanctumofSpiritborn)
-
-### Scripture Gems
-Bible trivia and scripture memorization game.
-
-- Status: In development.
+**To ship:** Wrap with Capacitor, add AdMob + RevenueCat, submit to App Store and Google Play.
 
 ---
 
-## Infrastructure and AI
+### `/sanctum/`
+Sanctum of Spiritborn. Spiritually-grounded skill-based RPG sandbox.
 
-### Dave (the AI Organism)
-Dave is not a chatbot wrapper. He is a native AI organism with his own kernel, memory substrate, atom store, perception loop, and inference pipeline. Built in C and Python. Runs on DaveOS.
-
-- Status: Running on an R510 server. `brain_ready=1`, uptime measured in days.
-- Repo: [Dave](https://github.com/majinboux/Dave) (private)
-
-### DaveOS
-A real UEFI-bootable OS written from scratch. Dave's kernel runs on it. Deployed and booting on a Dell PowerEdge R510.
-
-- Repo: [daveos-native](https://github.com/majinboux/daveos-native) (private)
-
-### DAVAR
-The native HTTP runtime that serves danczministries.com. One translation unit, 98 modules, 7.2 MB. Handles Bible lookup, site routing, give flow, and the coaching session surface.
-
-- Repo: [DaveDAVAR](https://github.com/majinboux/DaveDAVAR) (private)
-
-### DAVECloud
-A compact artifact emitter and control plane for the Dave platform.
-
-- Status: 57/57 tests pass. npm publish pending approval.
-- Repo: [davecloud](https://github.com/majinboux/davecloud) (private)
-
-### MemPalace
-Semantic memory system for AI agents. Open source.
-
-- Status: Live, in daily use across the estate.
-- Repo: [mempalace](https://github.com/majinboux/mempalace) (public)
+| File | Description |
+|------|-------------|
+| `Sanctum_of_Spiritborn_Design_Philosophy.pdf` | Full design doc. Pulse/Path/Pressure mechanic language, 12 classes. |
+| `Pilgrims_Progress_Storyboard.html` | Tutorial script and storyboard. |
 
 ---
 
-## Tools and Research
+### `/roblox/`
+The Wayfarer's Restoration. Dark fantasy faith RPG built in Roblox Studio.
 
-### DNCZ (Content-Addressed Atom Storage)
-A content-addressed compute substrate where computation is atom routing, not code execution. Over 1 million atoms in the estate.
-
-- Repo: [braille-dncz-atom-private](https://github.com/majinboux/braille-dncz-atom-private)
-
-### BrailleEdTech
-Accessibility-first Braille translation and layout generation backend.
-
-- Repo: [BrailleEdTech](https://github.com/majinboux/BrailleEdTech)
-
-### FastCBuilder
-Lightweight incremental build tooling for large C codebases.
-
-- Repo: [FastCBuilder](https://github.com/majinboux/FastCBuilder)
-
-### AutoDiligence
-Automated technical portfolio auditor. Factual, read-only scanner with controlled-fixture tests and installable CLI.
-
-- Status: Package ready. Outside-repo pilot pending approval.
-- Repo: [AutoDiligence](https://github.com/majinboux/AutoDiligence)
-
-### OpenClaw Skills
-Shared modular skill library for autonomous coding agents.
-
-- Repo: [openclaw-skills](https://github.com/majinboux/openclaw-skills)
-
-### Biblical Chronology Atlas
-Deterministic chronology tools and historical data products. Creation dated to 3968 BC, Passion to 33 CE, from primary source analysis.
-
-- Repo: [biblical-chronology-atlas](https://github.com/majinboux/biblical-chronology-atlas)
+| File | Description |
+|------|-------------|
+| `Wayfarers_Restoration_Roblox_Guide.pdf` | Complete step-by-step modular build guide. |
 
 ---
 
-## Ministry and Academic Work
+### `/funding/`
+Grant applications, research reports, and funding documentation.
 
-### The Way
-A men's faith coaching ministry. Cohort-based and 1:1 coaching. Ryan facilitates it himself. Not therapy. Not counseling.
+| File | Description |
+|------|-------------|
+| `Dancz_Chronology_Full_Status_Report.docx` | Full status report. 1.75M rows, 31,102 verses dated, FORCED/FITTED/FENCED methodology. |
 
-- Site: [danczministries.com/the-way](https://danczministries.com/the-way)
-
-### Mentorship Research
-IRB planning materials for a proposed mentorship research pilot. Consent templates, privacy handout, and theological review process documentation.
-
-### Collected Works
-Includes two narrative books, testimony, the Embodied Imprisonment dissertation, the 150-chapter Sanctum Dev Manual, the Trinity of Renewal clinical model, and approximately 65 academic articles.
+**Funding targets:** SBIR Phase I $250K, StreetShares $15K, Lilly Endowment $2.5M, USDA Rural $500K, SDVOSB certification
 
 ---
 
-## Contact
+## Broader Estate
 
-- Site: [danczministries.com](https://danczministries.com)
-- GitHub: [github.com/majinboux](https://github.com/majinboux)
+These are the other active repositories and projects under this account.
+
+### Live Site
+**[danczministries.com](https://danczministries.com)** runs on DAVAR, a native C HTTP server built from scratch. No WordPress. No Node. No third-party runtime. Bible study, give flow, and coaching pages are all DAVAR-native.
+
+### Apps
+- **RuachDavid Mobile** - Faith-based mobile app for Bible study and daily life ops. React Native / Expo. Build 37 produced on EAS. Pending App Store submission. [ruach-david-mobile](https://github.com/majinboux/ruach-david-mobile)
+- **RuachDavid Desktop** - Electron + React desktop app. Production web build passes. [dave-daveos-showcase](https://github.com/majinboux/dave-daveos-showcase)
+
+### Godot Game (Sanctum of Spiritborn)
+Full Godot 4 implementation. Player path scenes verified. 143 MB Windows export pack tested. [SanctumofSpiritborn](https://github.com/majinboux/SanctumofSpiritborn)
+
+### AI and Infrastructure
+- **Dave** - Native AI organism with its own kernel, memory substrate, atom store, perception loop, and inference pipeline. Running on a Dell PowerEdge R510. [Dave](https://github.com/majinboux/Dave)
+- **DaveOS** - UEFI-bootable OS built from scratch. Dave's kernel runs on it. [daveos-native](https://github.com/majinboux/daveos-native)
+- **DAVAR** - The native HTTP runtime serving danczministries.com. 98 modules, 7.2 MB, one translation unit. [DaveDAVAR](https://github.com/majinboux/DaveDAVAR)
+- **DAVECloud** - Control plane and artifact emitter. 57/57 tests pass. [davecloud](https://github.com/majinboux/davecloud)
+- **MemPalace** - Open source semantic memory system for AI agents. [mempalace](https://github.com/majinboux/mempalace) (public)
+
+### Tools
+- **AutoDiligence** - Technical portfolio auditor. Package ready. [AutoDiligence](https://github.com/majinboux/AutoDiligence)
+- **FastCBuilder** - Incremental build tooling for large C codebases. [FastCBuilder](https://github.com/majinboux/FastCBuilder)
+- **BrailleEdTech** - Braille translation and layout generation backend. [BrailleEdTech](https://github.com/majinboux/BrailleEdTech)
+- **OpenClaw Skills** - Modular skill library for autonomous coding agents. [openclaw-skills](https://github.com/majinboux/openclaw-skills)
+- **Biblical Chronology Atlas** - Chronology tools and historical data. Creation 3968 BC, Passion 33 CE. [biblical-chronology-atlas](https://github.com/majinboux/biblical-chronology-atlas)
+- **biblelua-data** - 80 Bible translations, 73 commentaries, 47 church fathers. [biblelua-data](https://github.com/majinboux/biblelua-data) (public)
+
+### Ministry
+- **The Way** - Men's faith coaching ministry. Cohort-based and 1:1. Ryan facilitates it himself. Not therapy. Not counseling. Live at [danczministries.com/the-way](https://danczministries.com/the-way)
+
+---
+
+## About Ryan
+
+- USAF veteran, 15.5 years, 100% P&T disabled
+- BSc Religious Studies, MSW candidate at USC (one class remaining, targeted January 2027)
+- Biblical chronology researcher. 1.75M curated dated rows, 31,102 verses.
+- Founder, Dancz Ministries LLC, Lugoff, South Carolina
+- Builder of the DAVAR platform, DAVE AI organism, and DaveOS
+
+Ryan is not a licensed therapist or counselor. He is an MSW candidate, not yet licensed.
+
+---
+
+*All scripture used in Scripture Gems is confirmed public domain (pre-1928). Translations: KJV, ASV, YLT, Darby, Webster, Weymouth, Rotherham.*
